@@ -7,6 +7,7 @@ void ofApp::setup(){
 
     gameState = new GameState();
     menuState = new MenuState();
+    loseState = new LoseState();
     currentState = menuState;
 
     sound.load("TetrisOrch.wav");
@@ -20,9 +21,12 @@ void ofApp::update(){
         if(currentState->getNextState() == "GameState") {
             gameState->reset();
             currentState = gameState;
-        } else if(currentState->getNextState() == "MenuState") {
-            menuState->reset();
-            currentState = menuState;
+        } else if(currentState->getNextState() == "LoseState") {
+            loseState->reset();
+            currentState = loseState;
+        // } else if(currentState->getNextState() == "MenuState") {
+        //     menuState->reset();
+        //     currentState = menuState;
         }
     }
     currentState->update();
