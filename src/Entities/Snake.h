@@ -39,4 +39,8 @@ public:
     std::vector<std::vector<int>> getBody() {
         return this->body;
     }
+
+    void removeSegment(){
+        body.pop_back();
+    }
 };
