@@ -27,5 +27,7 @@ class ofApp : public ofBaseApp{
 		State* currentState;
 		GameState* gameState;
 		MenuState* menuState;
+
+		ofSoundPlayer sound;
 		
 };

@@ -9,6 +9,9 @@ void ofApp::setup(){
     menuState = new MenuState();
     currentState = menuState;
 
+    sound.load("TetrisOrch.wav");
+    sound.setLoop(true);
+    sound.play();
 }
 
 //--------------------------------------------------------------

@@ -37,6 +37,9 @@ void Snake::update() {
             this->body[0][1] -= 1;      
             break;
         }
+        case NONE: {
+            break;
+        }
     }
 
     if(oldHead[0] == -1 || oldHead[0] == boardSizeWidth || oldHead[1] == -1 || oldHead[1] == boardSizeHeight) {
@@ -65,7 +68,7 @@ void Snake::draw() {
         if(i == 0) {
             ofSetColor(ofColor::darkGreen);
         } else {
-            ofSetColor(ofColor::white);
+            ofSetColor(ofColor::green);
         }
         ofDrawRectangle(curX * segmentSize, curY * segmentSize, segmentSize, segmentSize);
     }
