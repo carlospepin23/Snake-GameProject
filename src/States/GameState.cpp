@@ -38,13 +38,19 @@ void GameState::update() {
     if(ofGetFrameNum() % 10 == 0) {
         snake->update();
     }
-
+    if (snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY) {
+        score += 10;
+    }
+    if (snake->isCrashed()) {
+        score = 0;
+    }
 }
 //--------------------------------------------------------------
 void GameState::draw() {
     drawBoardGrid();
     snake->draw();
     drawFood();
+    ofDrawBitmapString("Score: " + ofToString(score), 10, 20);
 }
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {

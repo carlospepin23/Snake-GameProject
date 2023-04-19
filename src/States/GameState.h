@@ -27,4 +27,6 @@ class GameState : public State {
 
         int boardSizeWidth, boardSizeHeight;
         int cellSize; // Pixels
+
+        int score = 0;
 };
