@@ -11,6 +11,9 @@ GameState::GameState() {
 //--------------------------------------------------------------
 GameState::~GameState() {
     delete snake;
+    for(auto ptr : entities){
+        delete ptr;
+    }
 }
 //--------------------------------------------------------------
 void GameState::reset() {
@@ -35,6 +38,9 @@ void GameState::update() {
     }
 
     foodSpawner();
+    entitiesSpawner();
+
+
     if(ofGetFrameNum() % 10 == 0) {
         snake->update();
     }
@@ -50,6 +56,7 @@ void GameState::draw() {
     drawBoardGrid();
     snake->draw();
     drawFood();
+    drawEntities();
     ofDrawBitmapString("Score: " + ofToString(score), 10, 20);
 }
 //--------------------------------------------------------------
@@ -102,6 +109,32 @@ void GameState::drawFood() {
         ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
     }
 }
+//--------------------------------------------------------------
+void GameState::entitiesSpawner() { //method in charge of creating and adding entities
+    if(!entitySpawned){
+        entities.push_back(new StaticEntity("rock",ofColor::gray,ofRandom(1, boardSizeWidth-1), ofRandom(1, boardSizeHeight-1),50));
+        entitySpawned=true;
+    }
+}
+//--------------------------------------------------------------
+void GameState::drawEntities() { //method in charge of drawing all the entities
+    if(entitySpawned){
+        for(StaticEntity* e:entities){
+            e->draw();
+        }
+    }
+
+    
+}
+
+
+
+
+
+
+
+
+
 //--------------------------------------------------------------
 // void GameState::drawStartScreen() {
 //     ofSetColor(ofColor::black);
