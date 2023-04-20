@@ -11,15 +11,15 @@ GameState::GameState() {
 //--------------------------------------------------------------
 GameState::~GameState() {
     delete snake;
-    for(auto ptr : entities){
-        delete ptr;
-    }
+    entities.clear();
 }
 //--------------------------------------------------------------
 void GameState::reset() {
     delete snake;
+    entities.clear();
     snake = new Snake(cellSize, boardSizeWidth, boardSizeHeight);
     foodSpawned = false;
+    entitySpawned=false;
     setFinished(false);
     setNextState("");
 }
@@ -39,6 +39,14 @@ void GameState::update() {
 
     foodSpawner();
     entitiesSpawner();
+
+    for(int i=0;i<entities.size();i++){
+        if(snake->getHead()[0] == entities[i].getEntityX() && snake->getHead()[1] == entities[i].getEntityY()){
+            snake->setCrashed(true);
+        }
+    }
+
+
 
 
     if(ofGetFrameNum() % 10 == 0) {
@@ -112,15 +120,15 @@ void GameState::drawFood() {
 //--------------------------------------------------------------
 void GameState::entitiesSpawner() { //method in charge of creating and adding entities
     if(!entitySpawned){
-        entities.push_back(new StaticEntity("rock",ofColor::gray,ofRandom(1, boardSizeWidth-1), ofRandom(1, boardSizeHeight-1),50));
+        entities.push_back(StaticEntity("rock",ofColor::gray,ofRandom(1, (boardSizeWidth-1)/2), ofRandom(1, (boardSizeHeight-1))/2,25));
         entitySpawned=true;
     }
 }
 //--------------------------------------------------------------
 void GameState::drawEntities() { //method in charge of drawing all the entities
     if(entitySpawned){
-        for(StaticEntity* e:entities){
-            e->draw();
+        for(int i=0;i<entities.size();i++){
+            entities[i].draw();
         }
     }
 

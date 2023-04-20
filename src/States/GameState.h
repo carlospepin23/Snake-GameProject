@@ -24,7 +24,7 @@ class GameState : public State {
         Snake* snake;
 
         //Entities
-        vector<StaticEntity*> entities;
+        vector<StaticEntity> entities;
 
         int cellSize; // Pixels
 

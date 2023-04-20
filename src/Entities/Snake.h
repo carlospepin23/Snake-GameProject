@@ -27,9 +27,8 @@ public:
     void changeDirection(Direction d);
     void checkSelfCrash();
     void grow();
-    bool isCrashed() {
-        return this->crashed;
-    }
+    bool isCrashed() {return this->crashed;}
+    void setCrashed(bool b){this->crashed=b;}
     std::vector<int> getHead() {
         return this->body[0];
     }

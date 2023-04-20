@@ -8,7 +8,7 @@ protected:
     string name;
     ofColor color;
     int currentEntityX,currentEntityY;
-    bool crashed; //not implemented
+    // bool crashed; //not implemented
     int cellSize; // Pixels
 
 public:
@@ -16,7 +16,6 @@ public:
     Entity(string n, ofColor c, int entityX, int entityY, int cell_size){
         this->name=n;
         this->color=c;
-        this->crashed = false;
         this->currentEntityX = entityX;
         this->currentEntityY = entityY;
         this->cellSize=cell_size;
@@ -26,8 +25,10 @@ public:
     virtual void render()=0;
     virtual void update()=0;
     virtual void draw()=0;
-    bool isCrashed() {return this->crashed;}
     ofColor getColor(){return this->color;}
     int getCellsize(){return this->cellSize;}
+
+    int getEntityX(){return this->currentEntityX;}
+    int getEntityY(){return this->currentEntityY;}
     
 };
