@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "MenuState.h"
 #include "LoseState.h"
+#include "PauseState.h"
 
 class ofApp : public ofBaseApp{
 
@@ -17,7 +18,7 @@ class ofApp : public ofBaseApp{
 		// void keyReleased(int key);
 		// void mouseMoved(int x, int y );
 		// void mouseDragged(int x, int y, int button);
-		// void mousePressed(int x, int y, int button);
+		void mousePressed(int x, int y, int button);
 		// void mouseReleased(int x, int y, int button);
 		// void mouseEntered(int x, int y);
 		// void mouseExited(int x, int y);
@@ -29,7 +30,10 @@ class ofApp : public ofBaseApp{
 		GameState* gameState;
 		MenuState* menuState;
 		LoseState* loseState;
+		PauseState* pauseState;
 
 		ofSoundPlayer sound;
+
+		// float currentSongPosition = sound.getPosition();
 		
 };

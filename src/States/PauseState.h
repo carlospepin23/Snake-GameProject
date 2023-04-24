@@ -3,15 +3,16 @@
 #include "State.h"
 #include "ofMain.h"
 
-class MenuState : public State {
+class PauseState : public State {
 
 public:
-    MenuState();
-    ~MenuState();
+    PauseState();
+    ~PauseState();
     void reset();
     void update();
     void draw();
     void keyPressed(int key);
     void mousePressed(int x, int y, int button);
 
+    ofRectangle continueButton;
 };

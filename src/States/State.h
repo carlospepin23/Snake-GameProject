@@ -9,6 +9,7 @@ class State {
 		virtual void update() = 0;
 		virtual void draw() = 0;
         virtual void keyPressed(int key) = 0;
+		virtual void mousePressed(int x, int y, int button) = 0;
 
 		bool hasFinished(){
 			return finished;

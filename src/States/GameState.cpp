@@ -15,6 +15,12 @@ GameState::~GameState() {
 }
 //--------------------------------------------------------------
 void GameState::reset() {
+    if (getNextState() == "PauseState") {
+        setFinished(false);
+        setNextState("");
+        return;
+    }
+    else {
     delete snake;
     entities.clear();
     snake = new Snake(cellSize, boardSizeWidth, boardSizeHeight);
@@ -22,6 +28,7 @@ void GameState::reset() {
     entitySpawned=false;
     setFinished(false);
     setNextState("");
+    }
 }
 //--------------------------------------------------------------
 void GameState::update() {
@@ -40,7 +47,7 @@ void GameState::update() {
     foodSpawner();
     entitiesSpawner();
 
-    for(int i=0;i<entities.size();i++){
+    for(unsigned int i=0;i<entities.size();i++){
         if(snake->getHead()[0] == entities[i].getEntityX() && snake->getHead()[1] == entities[i].getEntityY()){
             snake->setCrashed(true);
         }
@@ -70,8 +77,6 @@ void GameState::draw() {
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {
 
-    if(key != OF_KEY_LEFT && key != OF_KEY_RIGHT && key != OF_KEY_UP && key != OF_KEY_DOWN && key !='a' && key!='u') { return; }
-
     switch(key) {
         case OF_KEY_LEFT:
             snake->changeDirection(LEFT);
@@ -90,6 +95,10 @@ void GameState::keyPressed(int key) {
             break;
         case 'u':
             if(snake->getBody().size()>2) snake->removeSegment();
+            break;
+        case 'p':
+            setFinished(true);
+            setNextState("PauseState");
             break;
     }
 }
@@ -127,7 +136,7 @@ void GameState::entitiesSpawner() { //method in charge of creating and adding en
 //--------------------------------------------------------------
 void GameState::drawEntities() { //method in charge of drawing all the entities
     if(entitySpawned){
-        for(int i=0;i<entities.size();i++){
+        for(unsigned int i=0;i<entities.size();i++){
             entities[i].draw();
         }
     }
@@ -176,3 +185,8 @@ void GameState::drawBoardGrid() {
 }
 //--------------------------------------------------------------
 
+void GameState::mousePressed(int x, int y, int button) {
+    
+}
+
+//--------------------------------------------------------------
