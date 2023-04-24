@@ -14,6 +14,7 @@ class GameState : public State {
         void draw();
         void keyPressed(int key);
         void foodSpawner();
+        void powUpManager(int score);
         void drawFood();
         void entitiesSpawner();
         void drawEntities();
@@ -29,6 +30,7 @@ class GameState : public State {
         int cellSize; // Pixels
 
         bool foodSpawned = false;
+        bool powUpSpawned = false;
 
         int currentFoodX;
         int currentFoodY;
@@ -37,5 +39,10 @@ class GameState : public State {
         
 
         int score = 0;
+        bool power_up_first=false,power_up_second=false,power_up_third=false,power_up_activated=false;
+        
+        string pow_up_s="None";
+        unsigned int pow_up=0;
+
         bool entitySpawned = false;
 };

@@ -36,7 +36,7 @@ void GameState::update() {
         snake->grow();
         foodSpawned = false;
     }
-
+    powUpManager(this->score);
     foodSpawner();
     entitiesSpawner();
 
@@ -45,9 +45,6 @@ void GameState::update() {
             snake->setCrashed(true);
         }
     }
-
-
-
 
     if(ofGetFrameNum() % 10 == 0) {
         snake->update();
@@ -66,6 +63,7 @@ void GameState::draw() {
     drawFood();
     drawEntities();
     ofDrawBitmapString("Score: " + ofToString(score), 10, 20);
+    ofDrawBitmapString("Current Power_Up: " + pow_up_s, 10, 40);
 }
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {
@@ -112,9 +110,27 @@ void GameState::foodSpawner() {
 }
 //--------------------------------------------------------------
 void GameState::drawFood() {
-    ofSetColor(ofColor::red);
-    if(foodSpawned) {
-        ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+    //ofSetColor(ofColor::red);
+    if(foodSpawned){
+        switch (pow_up){
+            case 1:
+                ofSetColor(ofColor::orange);
+                ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+                break;
+            case 2:
+                ofSetColor(ofColor::green);
+                ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+                break;
+            case 3:
+                ofSetColor(ofColor::white);
+                ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+                break;
+            default:
+                ofSetColor(ofColor::red);
+                ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+                break;
+        }
+
     }
 }
 //--------------------------------------------------------------
@@ -134,14 +150,6 @@ void GameState::drawEntities() { //method in charge of drawing all the entities
 
     
 }
-
-
-
-
-
-
-
-
 
 //--------------------------------------------------------------
 // void GameState::drawStartScreen() {
@@ -173,6 +181,42 @@ void GameState::drawBoardGrid() {
     //     ofDrawLine(i*cellSize, 0, i*cellSize, ofGetHeight());
     //     ofDrawLine(0, i*cellSize, ofGetWidth(), i*cellSize);
     // }
+}
+//--------------------------------------------------------------
+
+void GameState::powUpManager(int score){
+    //Spawner
+    if((score%150==0) && (power_up_first==true && power_up_second==true)){
+        pow_up=3;
+        power_up_third=true;
+    }
+    else if ((score%100==0) && (power_up_first==true && power_up_third==false)){
+        pow_up=2;
+        power_up_second=true;
+    }
+    else if ((score%50==0) && ((power_up_second==true && power_up_third==true) || (power_up_second==false && power_up_third==false))){
+        pow_up=1;
+        power_up_third=false;
+        power_up_second=false;
+        power_up_first=true;
+    }
+    else pow_up=0;
+
+    // switch (pow_up){ //pow_up va a cambiar segun snake se la haya comido
+    //     case 1:
+    //         pow_up_s="SpeedBoost";
+    //         break;
+    //     case 2:
+    //         pow_up_s="BetterApple";
+    //         break;
+    //     case 3:
+    //         pow_up_s="GodMode";
+    //         break;
+    //     default:
+    //         pow_up_s="None";
+    //         break;
+    //     };
+
 }
 //--------------------------------------------------------------
 
