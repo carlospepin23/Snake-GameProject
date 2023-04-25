@@ -32,8 +32,14 @@ void GameState::update() {
         return;
     }
 
-    if(snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY) {
-        snake->grow();
+    if(snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY){
+        if(powUp_Better_Apple==false) snake->grow();
+        else{
+            snake->grow();
+            snake->grow();
+            snake->grow();
+            snake->grow();
+        }
         foodSpawned = false;
     }
     powUpManager(this->p_score);
@@ -55,6 +61,9 @@ void GameState::update() {
     }
     if (snake->isCrashed()) {
         score = 0;
+        p_score = 0;
+        pow_up_activated=false;
+        powUp_Better_Apple=false;
     }
 }
 //--------------------------------------------------------------
@@ -69,7 +78,7 @@ void GameState::draw() {
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {
 
-    if(key != OF_KEY_LEFT && key != OF_KEY_RIGHT && key != OF_KEY_UP && key != OF_KEY_DOWN && key !='a' && key!='u') { return; }
+    if(key != OF_KEY_LEFT && key != OF_KEY_RIGHT && key != OF_KEY_UP && key != OF_KEY_DOWN && key !='a' && key!='u' && key!='b') { return; }
 
     switch(key) {
         case OF_KEY_LEFT:
@@ -92,13 +101,13 @@ void GameState::keyPressed(int key) {
             if(snake->getBody().size()>2) snake->removeSegment();
             break;
          case 'b':
-            pow_up_activated=false; //que la tecla b responda con el codigo correspondiente, y declarar el codigo de los powerups
+            pow_up_activated=false; //Declarar el codigo de los powerups
             switch(pow_up){
                 case 1:
                     //speedboost
                     break;
                 case 2:
-                    //betterapple
+                    powUp_Better_Apple=true;
                     break;
                 case 3:
                     //godmode
@@ -116,10 +125,12 @@ void GameState::foodSpawner() {
             currentFoodX = ofRandom(1, boardSizeWidth-1);
             currentFoodY = ofRandom(1, boardSizeHeight-1);
             for(unsigned int i = 0; i < snake->getBody().size(); i++) {
-                if(currentFoodX == snake->getBody()[i][0] and currentFoodY == snake->getBody()[i][1]) isInSnakeBody = true;
-                if(pow_up!=0) pow_up_activated=true; //ver donde colocar linea
+                if(currentFoodX == snake->getBody()[i][0] and currentFoodY == snake->getBody()[i][1]){
+                    isInSnakeBody = true;
+                }
             }
         } while(isInSnakeBody);
+        powUpDisplay(p_score);
         foodSpawned = true;
     }
 }
@@ -179,38 +190,29 @@ void GameState::drawBoardGrid() {
 
 void GameState::powUpManager(int p_score){
     //Spawner
-    switch(p_score){
-        case 50:
-            pow_up=1;
-            break;
-        case 100:
-            pow_up=2;
-            break;
-        case 150:
-            pow_up=3;
-            break;
-        default:
-            pow_up=0;
-            break;
-
-    } 
-
-    if(pow_up_activated==true){
-        switch (pow_up){ //pow_up va a cambiar segun snake se la haya comido
-        case 1:
-            pow_up_s="SpeedBoost";
-            break;
-        case 2:
-            pow_up_s="BetterApple";
-            break;
-        case 3:
-            pow_up_s="GodMode";
-            break;
-        };
-    }
-    else{
-        pow_up_s="None"; //trabajar en que el cambio se efectue despues de haberse comido la manzana
-    }
+    if(p_score==50) pow_up=1;
+    else if(p_score==100 && powUp_Better_Apple==false)  pow_up=2;
+    else if(p_score==150) pow_up=3;
+    else pow_up=0;
+    
 }
 //--------------------------------------------------------------
 
+void GameState::powUpDisplay(int p_score){
+    //Texto PowUps
+
+    if (pow_up_activated==false && (p_score!=60) && p_score!=110 && p_score!=10 ) pow_up_s="None"; //corregir linea para que ponga el estado corriente, y si lo usa pona None.
+
+    else if(p_score==60){
+        pow_up_s="SpeedBoost";
+        pow_up_activated=true;
+    }
+    else if (p_score==110){
+        pow_up_s="BetterApple";
+        pow_up_activated=true;
+    }
+    else if (p_score==10 && score!=0){
+        pow_up_s="GodMode";
+        pow_up_activated=true;
+    }
+}
