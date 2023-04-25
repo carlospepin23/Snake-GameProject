@@ -24,9 +24,6 @@ void ofApp::update(){
         } else if(currentState->getNextState() == "LoseState") {
             loseState->reset();
             currentState = loseState;
-        // } else if(currentState->getNextState() == "MenuState") {
-        //     menuState->reset();
-        //     currentState = menuState;
         }
     }
     currentState->update();

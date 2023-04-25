@@ -36,7 +36,7 @@ void GameState::update() {
         snake->grow();
         foodSpawned = false;
     }
-    powUpManager(this->score);
+    powUpManager(this->p_score);
     foodSpawner();
     entitiesSpawner();
 
@@ -51,6 +51,7 @@ void GameState::update() {
     }
     if (snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY) {
         score += 10;
+        p_score=(p_score%150)+10;
     }
     if (snake->isCrashed()) {
         score = 0;
@@ -85,9 +86,24 @@ void GameState::keyPressed(int key) {
             break;
         case 'a':
             score+=10;
+            p_score=(p_score%150)+10;
             break;
         case 'u':
             if(snake->getBody().size()>2) snake->removeSegment();
+            break;
+         case 'b':
+            pow_up_activated=false; //que la tecla b responda con el codigo correspondiente, y declarar el codigo de los powerups
+            switch(pow_up){
+                case 1:
+                    //speedboost
+                    break;
+                case 2:
+                    //betterapple
+                    break;
+                case 3:
+                    //godmode
+                    break;
+            }
             break;
     }
 }
@@ -100,9 +116,8 @@ void GameState::foodSpawner() {
             currentFoodX = ofRandom(1, boardSizeWidth-1);
             currentFoodY = ofRandom(1, boardSizeHeight-1);
             for(unsigned int i = 0; i < snake->getBody().size(); i++) {
-                if(currentFoodX == snake->getBody()[i][0] and currentFoodY == snake->getBody()[i][1]) {
-                    isInSnakeBody = true;
-                }
+                if(currentFoodX == snake->getBody()[i][0] and currentFoodY == snake->getBody()[i][1]) isInSnakeBody = true;
+                if(pow_up!=0) pow_up_activated=true; //ver donde colocar linea
             }
         } while(isInSnakeBody);
         foodSpawned = true;
@@ -110,7 +125,6 @@ void GameState::foodSpawner() {
 }
 //--------------------------------------------------------------
 void GameState::drawFood() {
-    //ofSetColor(ofColor::red);
     if(foodSpawned){
         switch (pow_up){
             case 1:
@@ -151,27 +165,6 @@ void GameState::drawEntities() { //method in charge of drawing all the entities
     
 }
 
-//--------------------------------------------------------------
-// void GameState::drawStartScreen() {
-//     ofSetColor(ofColor::black);
-//     ofDrawRectangle(0,0,ofGetWidth(),ofGetHeight());                                 IMPLEMENTADO EN MENUSTATE
-//     ofSetColor(ofColor::white);
-//     string text = "Press any arrow key to start.";
-//     ofDrawBitmapString(text, ofGetWidth()/2-8*text.length()/2, ofGetHeight()/2-11);
-//     return;
-// }
-//--------------------------------------------------------------
-// void GameState::drawLostScreen() {
-//     ofSetColor(ofColor::black);
-//     ofDrawRectangle(0,0,ofGetWidth(),ofGetHeight());                                 IMPLEMENTADO EN LOSESTATE
-//     ofSetColor(ofColor::white);
-//     string text = "You lost! Press any arrow key to play again";
-//     string text2 = "or press ESC to exit.";
-//     ofDrawBitmapString(text, ofGetWidth()/2-8*text.length()/2, ofGetHeight()/2-11);
-//     ofDrawBitmapString(text2, ofGetWidth()/2-8*text2.length()/2, ofGetHeight()/2+2);
-//     return;
-// }
-//--------------------------------------------------------------
 void GameState::drawBoardGrid() {
     
     ofDrawGrid(25, 64, false, false, false, true);
@@ -184,39 +177,40 @@ void GameState::drawBoardGrid() {
 }
 //--------------------------------------------------------------
 
-void GameState::powUpManager(int score){
+void GameState::powUpManager(int p_score){
     //Spawner
-    if((score%150==0) && (power_up_first==true && power_up_second==true)){
-        pow_up=3;
-        power_up_third=true;
-    }
-    else if ((score%100==0) && (power_up_first==true && power_up_third==false)){
-        pow_up=2;
-        power_up_second=true;
-    }
-    else if ((score%50==0) && ((power_up_second==true && power_up_third==true) || (power_up_second==false && power_up_third==false))){
-        pow_up=1;
-        power_up_third=false;
-        power_up_second=false;
-        power_up_first=true;
-    }
-    else pow_up=0;
+    switch(p_score){
+        case 50:
+            pow_up=1;
+            break;
+        case 100:
+            pow_up=2;
+            break;
+        case 150:
+            pow_up=3;
+            break;
+        default:
+            pow_up=0;
+            break;
 
-    // switch (pow_up){ //pow_up va a cambiar segun snake se la haya comido
-    //     case 1:
-    //         pow_up_s="SpeedBoost";
-    //         break;
-    //     case 2:
-    //         pow_up_s="BetterApple";
-    //         break;
-    //     case 3:
-    //         pow_up_s="GodMode";
-    //         break;
-    //     default:
-    //         pow_up_s="None";
-    //         break;
-    //     };
+    } 
 
+    if(pow_up_activated==true){
+        switch (pow_up){ //pow_up va a cambiar segun snake se la haya comido
+        case 1:
+            pow_up_s="SpeedBoost";
+            break;
+        case 2:
+            pow_up_s="BetterApple";
+            break;
+        case 3:
+            pow_up_s="GodMode";
+            break;
+        };
+    }
+    else{
+        pow_up_s="None"; //trabajar en que el cambio se efectue despues de haberse comido la manzana
+    }
 }
 //--------------------------------------------------------------
 
