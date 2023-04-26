@@ -15,4 +15,5 @@ public:
     void mousePressed(int x, int y, int button);
 
     ofRectangle continueButton;
+    ofTrueTypeFont font;
 };

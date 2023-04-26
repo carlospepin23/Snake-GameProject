@@ -22,10 +22,10 @@ void MenuState::update() {
 void MenuState::draw() {
     ofSetColor(ofColor::black);
     ofDrawRectangle(0,0,ofGetWidth(),ofGetHeight());
-    ofSetColor(ofColor::white);
-    string text = "Press any arrow key to start.";
-    ofDrawBitmapString(text, ofGetWidth()/2-8*text.length()/2, ofGetHeight()/2-11);
-    return;
+    font.load("minecraft.ttf", 28);
+    ofSetColor(ofColor::blue);
+    font.drawString("WELCOME TO SNAKE!", ofGetWidth() / 2 - 220, ofGetHeight() / 3 + 20);
+    font.drawString("Press any arrow key to start.", ofGetWidth() / 2 - 330, ofGetHeight() / 3 + 150);
 }
 //--------------------------------------------------------------
 void MenuState::keyPressed(int key) {
