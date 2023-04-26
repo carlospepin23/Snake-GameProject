@@ -15,5 +15,6 @@ public:
     void mousePressed(int x, int y, int button);
 
     ofTrueTypeFont font;
-
+    
+    ofImage backgroundImg;
 };

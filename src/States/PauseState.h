@@ -16,4 +16,6 @@ public:
 
     ofRectangle continueButton;
     ofTrueTypeFont font;
+    
+    ofImage backgroundImg;
 };

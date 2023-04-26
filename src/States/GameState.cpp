@@ -79,8 +79,10 @@ void GameState::draw() {
     snake->draw();
     drawFood();
     drawEntities();
-    ofDrawBitmapString("Score: " + ofToString(score), 10, 20);
-    ofDrawBitmapString("Current Power_Up: " + pow_up_s, 10, 40);
+
+    ofSetColor(ofColor::white);
+    ofDrawBitmapString("Score: " + ofToString(score), 10, 15);
+    ofDrawBitmapString("Current Power Up: " + pow_up_s, 10, 30);
 }
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {

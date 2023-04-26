@@ -35,5 +35,5 @@ class ofApp : public ofBaseApp{
 		ofSoundPlayer sound;
 
 		// float currentSongPosition = sound.getPosition();
-		
+		ofSoundPlayer sound2;
 };
