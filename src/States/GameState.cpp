@@ -129,8 +129,16 @@ void GameState::drawFood() {
 //--------------------------------------------------------------
 void GameState::entitiesSpawner() { //method in charge of creating and adding entities
     if(!entitySpawned){
-        entities.push_back(StaticEntity("rock",ofColor::gray,ofRandom(1, (boardSizeWidth-1)/2), ofRandom(1, (boardSizeHeight-1))/2,25));
-        entitySpawned=true;
+        rockSpawner();
+        rockSpawner();
+        rockSpawner();
+
+        treeSpawner();
+        treeSpawner();
+        
+        waterSpawner();
+        waterSpawner();
+        
     }
 }
 //--------------------------------------------------------------
