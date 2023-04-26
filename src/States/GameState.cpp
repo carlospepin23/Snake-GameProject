@@ -15,7 +15,7 @@ GameState::~GameState() {
 }
 //--------------------------------------------------------------
 void GameState::reset() {
-    if (getNextState() == "PauseState") {
+    if(getNextState() == "PauseState") {
         setFinished(false);
         setNextState("");
         return;
@@ -39,11 +39,17 @@ void GameState::update() {
         return;
     }
 
-    if(snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY) {
-        snake->grow();
+    if(snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY){
+        if(powUp_Better_Apple==true){
+            snake->grow();
+            snake->grow();
+        }
+        else{
+            snake->grow();
+        }
         foodSpawned = false;
     }
-
+    powUpManager(this->p_score);
     foodSpawner();
     entitiesSpawner();
 
@@ -53,17 +59,18 @@ void GameState::update() {
         }
     }
 
-
-
-
     if(ofGetFrameNum() % 10 == 0) {
         snake->update();
     }
     if (snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY) {
         score += 10;
+        p_score=(p_score%150)+10;
     }
     if (snake->isCrashed()) {
+        pow_up_s="None";
         score = 0;
+        p_score = 0;
+        powUp_Better_Apple=false;
     }
 }
 //--------------------------------------------------------------
@@ -73,9 +80,12 @@ void GameState::draw() {
     drawFood();
     drawEntities();
     ofDrawBitmapString("Score: " + ofToString(score), 10, 20);
+    ofDrawBitmapString("Current Power_Up: " + pow_up_s, 10, 40);
 }
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {
+
+    if(key != OF_KEY_LEFT && key != OF_KEY_RIGHT && key != OF_KEY_UP && key != OF_KEY_DOWN && key !='a' && key!='u' && key!='b' && key!='p') { return; }
 
     switch(key) {
         case OF_KEY_LEFT:
@@ -92,6 +102,7 @@ void GameState::keyPressed(int key) {
             break;
         case 'a':
             score+=10;
+            p_score=(p_score%150)+10;
             break;
         case 'u':
             if(snake->getBody().size()>2) snake->removeSegment();
@@ -100,6 +111,20 @@ void GameState::keyPressed(int key) {
             setFinished(true);
             setNextState("PauseState");
             break;
+        case 'b':
+            //Declarar el codigo de los powerups
+            if(pow_up_s=="SpeedBoost"){
+                //code SpeedBoost
+            }
+            else if(pow_up_s=="BetterApple"){
+                powUp_Better_Apple=true;
+            }
+            else if(pow_up_s=="GodMode"){
+                //code GodMode
+            }
+            pow_up_s="None";
+            break;
+        
     }
 }
 //--------------------------------------------------------------
@@ -111,19 +136,37 @@ void GameState::foodSpawner() {
             currentFoodX = ofRandom(1, boardSizeWidth-1);
             currentFoodY = ofRandom(1, boardSizeHeight-1);
             for(unsigned int i = 0; i < snake->getBody().size(); i++) {
-                if(currentFoodX == snake->getBody()[i][0] and currentFoodY == snake->getBody()[i][1]) {
+                if(currentFoodX == snake->getBody()[i][0] and currentFoodY == snake->getBody()[i][1]){
                     isInSnakeBody = true;
                 }
             }
         } while(isInSnakeBody);
+        powUpDisplay(p_score);
         foodSpawned = true;
     }
 }
 //--------------------------------------------------------------
 void GameState::drawFood() {
-    ofSetColor(ofColor::red);
-    if(foodSpawned) {
-        ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+    if(foodSpawned){
+        switch (pow_up){
+            case 1:
+                ofSetColor(ofColor::orange);
+                ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+                break;
+            case 2:
+                ofSetColor(ofColor::green);
+                ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+                break;
+            case 3:
+                ofSetColor(ofColor::white);
+                ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+                break;
+            default:
+                ofSetColor(ofColor::red);
+                ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+                break;
+        }
+
     }
 }
 //--------------------------------------------------------------
@@ -152,35 +195,6 @@ void GameState::drawEntities() { //method in charge of drawing all the entities
     
 }
 
-
-
-
-
-
-
-
-
-//--------------------------------------------------------------
-// void GameState::drawStartScreen() {
-//     ofSetColor(ofColor::black);
-//     ofDrawRectangle(0,0,ofGetWidth(),ofGetHeight());                                 IMPLEMENTADO EN MENUSTATE
-//     ofSetColor(ofColor::white);
-//     string text = "Press any arrow key to start.";
-//     ofDrawBitmapString(text, ofGetWidth()/2-8*text.length()/2, ofGetHeight()/2-11);
-//     return;
-// }
-//--------------------------------------------------------------
-// void GameState::drawLostScreen() {
-//     ofSetColor(ofColor::black);
-//     ofDrawRectangle(0,0,ofGetWidth(),ofGetHeight());                                 IMPLEMENTADO EN LOSESTATE
-//     ofSetColor(ofColor::white);
-//     string text = "You lost! Press any arrow key to play again";
-//     string text2 = "or press ESC to exit.";
-//     ofDrawBitmapString(text, ofGetWidth()/2-8*text.length()/2, ofGetHeight()/2-11);
-//     ofDrawBitmapString(text2, ofGetWidth()/2-8*text2.length()/2, ofGetHeight()/2+2);
-//     return;
-// }
-//--------------------------------------------------------------
 void GameState::drawBoardGrid() {
     
     ofDrawGrid(25, 64, false, false, false, true);
@@ -193,8 +207,28 @@ void GameState::drawBoardGrid() {
 }
 //--------------------------------------------------------------
 
-void GameState::mousePressed(int x, int y, int button) {
+void GameState::powUpManager(int p_score){
+
+    //Spawner
+    if(p_score==50) pow_up=1;
+    else if(p_score==100 && powUp_Better_Apple==false) pow_up=2;
+    else if(p_score==150) pow_up=3;
+    else pow_up=0;
     
 }
+
+//--------------------------------------------------------------
+
+void GameState::powUpDisplay(int p_score){
+
+    //Texto PowUps
+    if(p_score==60) pow_up_s="SpeedBoost";
+    else if (p_score==110 && powUp_Better_Apple==false) pow_up_s="BetterApple";
+    else if (p_score==10 && score!=10) pow_up_s="GodMode";
+}
+
+//--------------------------------------------------------------
+
+void GameState::mousePressed(int x, int y, int button) {}
 
 //--------------------------------------------------------------

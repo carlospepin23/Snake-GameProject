@@ -26,9 +26,6 @@ void ofApp::update(){
             loseState->reset();
             currentState = loseState;
             sound.stop();
-        // } else if(currentState->getNextState() == "MenuState") {
-        //     menuState->reset();
-        //     currentState = menuState;
         } else if(currentState->getNextState() == "PauseState") {
             pauseState->reset();
             currentState = pauseState;

@@ -14,6 +14,8 @@ class GameState : public State {
         void draw();
         void keyPressed(int key);
         void foodSpawner();
+        void powUpManager(int score);
+        void powUpDisplay(int p_score);
         void drawFood();
         void entitiesSpawner();
         void drawEntities();
@@ -39,6 +41,10 @@ class GameState : public State {
 
         int score = 0;
         bool entitySpawned = false;
+        int p_score=0;
+        bool powUp_Better_Apple=false;
+        string pow_up_s="None";
+        unsigned int pow_up=0;
 
         void rockSpawner() {
             entities.push_back(StaticEntity("rock",ofColor::gray,ofRandom(1, (boardSizeWidth-1)), ofRandom(1, (boardSizeHeight-2)),25));
