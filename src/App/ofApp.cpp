@@ -20,6 +20,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    currentState->tick();
     if(currentState->hasFinished()) {
         if(currentState->getNextState() == "GameState") {
             gameState->reset();

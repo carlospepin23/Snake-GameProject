@@ -15,6 +15,7 @@ class GameState : public State {
         void keyPressed(int key);
         void foodSpawner();
         void powUpManager(int score);
+        // void speedBoostManager();
         void powUpDisplay(int p_score);
         void drawFood();
         void entitiesSpawner();
@@ -23,6 +24,7 @@ class GameState : public State {
         // void drawLostScreen();
         void drawBoardGrid();
         void mousePressed(int x, int y, int button);
+        void tick();
 
         Snake* snake;
 
@@ -42,9 +44,13 @@ class GameState : public State {
         int score = 0;
         bool entitySpawned = false;
         int p_score=0;
-        bool powUp_Better_Apple=false;
+        bool powUp_Better_Apple=false, powUp_Speed_Boost=false;
         string pow_up_s="None";
         unsigned int pow_up=0;
+        int ticks=0;
+        int seconds=0;
+        int timer=0;
+
 
         void rockSpawner() {
             entities.push_back(StaticEntity("rock",ofColor::gray,ofRandom(1, (boardSizeWidth-1)), ofRandom(1, (boardSizeHeight-2)),25));

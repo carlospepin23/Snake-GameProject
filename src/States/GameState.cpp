@@ -39,6 +39,8 @@ void GameState::update() {
         return;
     }
 
+
+
     if(snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY){
         if(powUp_Better_Apple==true){
             snake->grow();
@@ -49,19 +51,26 @@ void GameState::update() {
         }
         foodSpawned = false;
     }
+    
     powUpManager(this->p_score);
     foodSpawner();
     entitiesSpawner();
 
     for(unsigned int i=0;i<entities.size();i++){
         if(snake->getHead()[0] == entities[i].getEntityX() && snake->getHead()[1] == entities[i].getEntityY()){
-            snake->setCrashed(true);
+            snake->setCrashed(true);                                                                                                //Add Inmortal code
         }
     }
 
     if(ofGetFrameNum() % 10 == 0) {
-        snake->update();
+        if(powUp_Speed_Boost==true){
+            snake->update();
+            snake->update();
+        }
+        else snake->update();
+        
     }
+
     if (snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY) {
         score += 10;
         p_score=(p_score%150)+10;
@@ -70,7 +79,10 @@ void GameState::update() {
         pow_up_s="None";
         score = 0;
         p_score = 0;
+        ticks=0;
+        seconds=0;
         powUp_Better_Apple=false;
+        powUp_Speed_Boost=false;
     }
 }
 //--------------------------------------------------------------
@@ -83,6 +95,9 @@ void GameState::draw() {
     ofSetColor(ofColor::white);
     ofDrawBitmapString("Score: " + ofToString(score), 10, 15);
     ofDrawBitmapString("Current Power Up: " + pow_up_s, 10, 30);
+    if(powUp_Speed_Boost==true){
+        ofDrawBitmapString("SpeedBoost remaining seconds: " + ofToString(timer-seconds), 10, 45);
+    }
 }
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {
@@ -116,13 +131,19 @@ void GameState::keyPressed(int key) {
         case 'b':
             //Declarar el codigo de los powerups
             if(pow_up_s=="SpeedBoost"){
-                //code SpeedBoost
+                ticks=0;
+                seconds=0;
+                timer=15;
+                powUp_Speed_Boost=true;
             }
             else if(pow_up_s=="BetterApple"){
                 powUp_Better_Apple=true;
             }
             else if(pow_up_s=="GodMode"){
-                //code GodMode
+                ticks=0;
+                seconds=0;
+                timer=10;
+                snake->setInmortal(true);
             }
             pow_up_s="None";
             break;
@@ -232,5 +253,17 @@ void GameState::powUpDisplay(int p_score){
 //--------------------------------------------------------------
 
 void GameState::mousePressed(int x, int y, int button) {}
+
+//--------------------------------------------------------------
+
+void GameState::tick(){
+    ticks++;
+    if(ticks % 60 == 0){
+        seconds+=1;
+    }
+    if(powUp_Speed_Boost==true) if(seconds>=timer) powUp_Speed_Boost=false;
+    else if(snake->isInmortal()) if(seconds>=timer) snake->setInmortal(false);          
+    
+}
 
 //--------------------------------------------------------------

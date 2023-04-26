@@ -17,6 +17,7 @@ private:
     int boardSizeWidth, boardSizeHeight;
     int segmentSize;
     bool crashed;
+    bool inmortal;
 
 public:
     Snake(int segmentSize, int boardSizeW, int boardSizeH);
@@ -28,7 +29,9 @@ public:
     void checkSelfCrash();
     void grow();
     bool isCrashed() {return this->crashed;}
+    bool isInmortal() {return this->inmortal;}
     void setCrashed(bool b){this->crashed=b;}
+    void setInmortal(bool i){this->inmortal=i;}
     std::vector<int> getHead() {
         return this->body[0];
     }
