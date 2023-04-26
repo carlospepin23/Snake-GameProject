@@ -42,11 +42,10 @@ class GameState : public State {
         bool entitySpawned = false;
 
         int p_score=0;
-        bool pow_up_activated=false;
+        bool powUp_Better_Apple=false;
         string pow_up_s="None";
         unsigned int pow_up=0;
 
-        bool powUp_Better_Apple=false;
 
 
 };

@@ -33,11 +33,11 @@ void GameState::update() {
     }
 
     if(snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY){
-        if(powUp_Better_Apple==false) snake->grow();
+        if(powUp_Better_Apple==true){
+            snake->grow();
+            snake->grow();
+        }
         else{
-            snake->grow();
-            snake->grow();
-            snake->grow();
             snake->grow();
         }
         foodSpawned = false;
@@ -62,7 +62,6 @@ void GameState::update() {
     if (snake->isCrashed()) {
         score = 0;
         p_score = 0;
-        pow_up_activated=false;
         powUp_Better_Apple=false;
     }
 }
@@ -101,18 +100,17 @@ void GameState::keyPressed(int key) {
             if(snake->getBody().size()>2) snake->removeSegment();
             break;
          case 'b':
-            pow_up_activated=false; //Declarar el codigo de los powerups
-            switch(pow_up){
-                case 1:
-                    //speedboost
-                    break;
-                case 2:
-                    powUp_Better_Apple=true;
-                    break;
-                case 3:
-                    //godmode
-                    break;
+            //Declarar el codigo de los powerups
+            if(pow_up_s=="SpeedBoost"){
+                //code SpeedBoost
             }
+            else if(pow_up_s=="BetterApple"){
+                powUp_Better_Apple=true;
+            }
+            else if(pow_up_s=="GodMode"){
+                //code GodMode
+            }
+            pow_up_s="None";
             break;
     }
 }
@@ -189,9 +187,10 @@ void GameState::drawBoardGrid() {
 //--------------------------------------------------------------
 
 void GameState::powUpManager(int p_score){
+
     //Spawner
     if(p_score==50) pow_up=1;
-    else if(p_score==100 && powUp_Better_Apple==false)  pow_up=2;
+    else if(p_score==100 && powUp_Better_Apple==false) pow_up=2;
     else if(p_score==150) pow_up=3;
     else pow_up=0;
     
@@ -201,18 +200,9 @@ void GameState::powUpManager(int p_score){
 void GameState::powUpDisplay(int p_score){
     //Texto PowUps
 
-    if (pow_up_activated==false && (p_score!=60) && p_score!=110 && p_score!=10 ) pow_up_s="None"; //corregir linea para que ponga el estado corriente, y si lo usa pona None.
+    if(p_score==60) pow_up_s="SpeedBoost";
+    else if (p_score==110 && powUp_Better_Apple==false) pow_up_s="BetterApple";
+    else if (p_score==10 && score!=10) pow_up_s="GodMode";
 
-    else if(p_score==60){
-        pow_up_s="SpeedBoost";
-        pow_up_activated=true;
-    }
-    else if (p_score==110){
-        pow_up_s="BetterApple";
-        pow_up_activated=true;
-    }
-    else if (p_score==10 && score!=0){
-        pow_up_s="GodMode";
-        pow_up_activated=true;
-    }
+    
 }
