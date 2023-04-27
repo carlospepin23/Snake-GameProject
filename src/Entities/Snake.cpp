@@ -43,9 +43,14 @@ void Snake::update() {
     }
 
     if(oldHead[0] == -1 || oldHead[0] == boardSizeWidth || oldHead[1] == -1 || oldHead[1] == boardSizeHeight) {
-        crashed = true;
+        if(isInmortal()==false){
+            crashed = true;
+            return;
+        }
+        stop(); //El snake se queda inmovil si toca los limites en GodMode
         return;
     }
+    
 
     int prevX = oldHead[0];
     int prevY = oldHead[1];
@@ -57,8 +62,10 @@ void Snake::update() {
         prevX = currX;
         prevY = currY;
     }
+    if(isInmortal()==false){
+        checkSelfCrash();
+    }
 
-    checkSelfCrash();
 }
 
 void Snake::draw() {
@@ -102,4 +109,17 @@ void Snake::checkSelfCrash() {
 void Snake::grow() {
     vector<int> newSegment = this->getTail();
     this->body.push_back(newSegment);
+}
+
+void Snake::stop(){                                             //Fix stop function
+    int prevX = this->body[this->body.size()-1][0];                 
+    int prevY = this->body[this->body.size()-1][1];
+    for (unsigned int i = this->body.size()-1; i > 0; i--) {
+        int currX = this->body[i-1][0];
+        int currY = this->body[i-1][1];
+        this->body[i][0] = currX;
+        this->body[i][1] = currY;
+    }
+    this->body[0][0] = prevX;
+    this->body[0][1] = prevY;
 }

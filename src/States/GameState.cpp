@@ -58,8 +58,9 @@ void GameState::update() {
 
     for(unsigned int i=0;i<entities.size();i++){
         if(snake->getHead()[0] == entities[i].getEntityX() && snake->getHead()[1] == entities[i].getEntityY()){
-            snake->setCrashed(true);                                                                                                //Add Inmortal code
-        }
+            if(snake->isInmortal()==false) snake->setCrashed(true);
+            else snake->stop();
+        }  
     }
 
     if(ofGetFrameNum() % 10 == 0) {
@@ -97,6 +98,9 @@ void GameState::draw() {
     ofDrawBitmapString("Current Power Up: " + pow_up_s, 10, 30);
     if(powUp_Speed_Boost==true){
         ofDrawBitmapString("SpeedBoost remaining seconds: " + ofToString(timer-seconds), 10, 45);
+    }
+    else if(snake->isInmortal()){
+        ofDrawBitmapString("GodMode remaining seconds: " + ofToString(timer-seconds), 10, 45);
     }
 }
 //--------------------------------------------------------------
@@ -152,7 +156,7 @@ void GameState::keyPressed(int key) {
 }
 //--------------------------------------------------------------
 void GameState::foodSpawner() {
-    if(!foodSpawned) {
+    if(!foodSpawned) {                                                                                  //Make compatible with speedBoost powup
         bool isInSnakeBody;
         do {
             isInSnakeBody = false;
@@ -261,7 +265,9 @@ void GameState::tick(){
     if(ticks % 60 == 0){
         seconds+=1;
     }
-    if(powUp_Speed_Boost==true) if(seconds>=timer) powUp_Speed_Boost=false;
+    if(powUp_Speed_Boost==true){
+        if(seconds>=timer) powUp_Speed_Boost=false;
+    }
     else if(snake->isInmortal()) if(seconds>=timer) snake->setInmortal(false);          
     
 }
