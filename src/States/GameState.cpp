@@ -63,13 +63,9 @@ void GameState::update() {
         }  
     }
 
-    if(ofGetFrameNum() % 10 == 0) {
-        if(powUp_Speed_Boost==true){
+    int updateCount = powUp_Speed_Boost ? 5 : 10;
+    if(ofGetFrameNum() % updateCount == 0) {
             snake->update();
-            snake->update();
-        }
-        else snake->update();
-        
     }
 
     if (snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY) {
@@ -106,7 +102,7 @@ void GameState::draw() {
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {
 
-    if(key != OF_KEY_LEFT && key != OF_KEY_RIGHT && key != OF_KEY_UP && key != OF_KEY_DOWN && key !='a' && key!='u' && key!='b' && key!='p') { return; }
+    // if(key != OF_KEY_LEFT && key != OF_KEY_RIGHT && key != OF_KEY_UP && key != OF_KEY_DOWN && key !='a' && key!='u' && key!='b' && key!='p') { return; }
 
     switch(key) {
         case OF_KEY_LEFT:
@@ -223,7 +219,7 @@ void GameState::drawEntities() { //method in charge of drawing all the entities
 }
 
 void GameState::drawBoardGrid() {
-    
+    ofSetBackgroundColor(ofColor::black);
     ofDrawGrid(25, 64, false, false, false, true);
     
     // ofSetColor(ofColor::white);
@@ -262,7 +258,7 @@ void GameState::mousePressed(int x, int y, int button) {}
 
 void GameState::tick(){
     ticks++;
-    if(ticks % 60 == 0){
+    if(ticks % 150 == 0){
         seconds+=1;
     }
     if(powUp_Speed_Boost==true){
