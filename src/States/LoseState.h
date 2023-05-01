@@ -14,7 +14,10 @@ public:
     void keyPressed(int key);
     void mousePressed(int x, int y, int button);
     void tick() {}
+    int getScore(){return 0;}
+    void displayScore(int s){this->score=s;}
 
     ofTrueTypeFont font;
+    int score;
 
 };

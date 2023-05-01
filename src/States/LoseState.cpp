@@ -30,6 +30,8 @@ void LoseState::draw() {
     font.load("minecraft.ttf", 28);
     ofSetColor(ofColor::red);
     font.drawString("YOU LOST!", ofGetWidth() / 2 - 110, ofGetHeight() / 3);
+    ofSetColor(ofColor::lightGreen);
+    font.drawString("Score: "+ofToString(score),ofGetWidth() / 2 - 110, ofGetHeight() / 2-60);
     // font.drawString("or press ESC to exit.", ofGetWidth() / 2 - 165, ofGetHeight() / 3 + 150);
 }
 //--------------------------------------------------------------

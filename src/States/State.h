@@ -11,6 +11,7 @@ class State {
         virtual void keyPressed(int key) = 0;
 		virtual void mousePressed(int x, int y, int button) = 0;
 		virtual void tick()=0;
+		virtual int getScore()=0;
 
 		bool hasFinished(){
 			return finished;

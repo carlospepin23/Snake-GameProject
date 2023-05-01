@@ -34,12 +34,20 @@ void GameState::reset() {
 void GameState::update() {
 
     if(snake->isCrashed()) {
+        
         this->setNextState("LoseState");
         this->setFinished(true);
+        pow_up_s="None";
+        last_score=score;
+        score = 0;
+        p_score = 0;
+        ticks=0;
+        seconds=0;
+        powUp_Better_Apple=false;
+        powUp_Speed_Boost=false;
         return;
+
     }
-
-
 
     if(snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY){
         if(powUp_Better_Apple==true){
@@ -71,15 +79,6 @@ void GameState::update() {
     if (snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY) {
         score += 10;
         p_score=(p_score%150)+10;
-    }
-    if (snake->isCrashed()) {
-        pow_up_s="None";
-        score = 0;
-        p_score = 0;
-        ticks=0;
-        seconds=0;
-        powUp_Better_Apple=false;
-        powUp_Speed_Boost=false;
     }
 }
 //--------------------------------------------------------------
@@ -195,16 +194,13 @@ void GameState::drawFood() {
 //--------------------------------------------------------------
 void GameState::entitiesSpawner() { //method in charge of creating and adding entities
     if(!entitySpawned){
-        rockSpawner();
-        rockSpawner();
-        rockSpawner();
+        for(int i = 0; i < 10; i++){
+            int randNum = ofRandom(1,4);
+            if(randNum == 1) rockSpawner();
+            else if(randNum == 2) treeSpawner();
+            else if(randNum == 3) waterSpawner();
 
-        treeSpawner();
-        treeSpawner();
-        
-        waterSpawner();
-        waterSpawner();
-        
+        }
     }
 }
 //--------------------------------------------------------------
@@ -221,12 +217,6 @@ void GameState::drawEntities() { //method in charge of drawing all the entities
 void GameState::drawBoardGrid() {
     ofSetBackgroundColor(ofColor::black);
     ofDrawGrid(25, 64, false, false, false, true);
-    
-    // ofSetColor(ofColor::white);
-    // for(int i = 0; i <= boardSize; i++) {
-    //     ofDrawLine(i*cellSize, 0, i*cellSize, ofGetHeight());
-    //     ofDrawLine(0, i*cellSize, ofGetWidth(), i*cellSize);
-    // }
 }
 //--------------------------------------------------------------
 
@@ -258,7 +248,7 @@ void GameState::mousePressed(int x, int y, int button) {}
 
 void GameState::tick(){
     ticks++;
-    if(ticks % 150 == 0){
+    if(ticks % 60 == 0){ //60 because 60 ticks are 1 second
         seconds+=1;
     }
     if(powUp_Speed_Boost==true){

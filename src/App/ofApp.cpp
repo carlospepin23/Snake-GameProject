@@ -29,6 +29,7 @@ void ofApp::update(){
             sound.play();
         } else if(currentState->getNextState() == "LoseState") {
             loseState->reset();
+            loseState->displayScore(currentState->getScore());
             currentState = loseState;
             sound.stop();
         } else if(currentState->getNextState() == "PauseState") {

@@ -26,6 +26,8 @@ class GameState : public State {
         void mousePressed(int x, int y, int button);
         void tick();
 
+        int getScore(){return this->last_score;}
+
         Snake* snake;
 
         //Entities
@@ -39,8 +41,7 @@ class GameState : public State {
         int currentFoodY;
 
         int boardSizeWidth, boardSizeHeight;
-        
-
+        int last_score=0;
         int score = 0;
         bool entitySpawned = false;
         int p_score=0;
