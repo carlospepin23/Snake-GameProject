@@ -52,6 +52,15 @@ class GameState : public State {
         int seconds=0;
         int timer=0;
 
+        int green = 0;
+        int red = 255;
+
+        int decayCounter = 0;
+
+        int foodTimer = 30;
+
+        int previousDecayCounter = 0;
+
 
         void rockSpawner() {
             entities.push_back(StaticEntity("rock",ofColor::gray,ofRandom(1, (boardSizeWidth-1)), ofRandom(1, (boardSizeHeight-2)),25));

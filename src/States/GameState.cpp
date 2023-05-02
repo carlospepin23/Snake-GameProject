@@ -97,6 +97,24 @@ void GameState::draw() {
     else if(snake->isInmortal()){
         ofDrawBitmapString("GodMode remaining seconds: " + ofToString(timer-seconds), 10, 45);
     }
+    else{
+        if (foodSpawned==true && pow_up != 1 && pow_up != 2 && pow_up != 3){
+            ofDrawBitmapString("Hurry! Get the food: " + ofToString(30-decayCounter), 10, 45);
+        }
+        else{
+            ofDrawBitmapString("A PowerUp has spawned!", 10, 45);
+        }
+    }
+    
+    if(decayCounter > previousDecayCounter && pow_up != 1 && pow_up != 2 && pow_up != 3){
+        previousDecayCounter = decayCounter;
+        red -= 4;
+        green += 3;
+    }
+
+    if(decayCounter == 30 && pow_up != 1 && pow_up != 2 && pow_up != 3){
+        foodSpawned = false;
+    }
 }
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {
@@ -165,6 +183,10 @@ void GameState::foodSpawner() {
         } while(isInSnakeBody);
         powUpDisplay(p_score);
         foodSpawned = true;
+        red = 255;
+        green = 0;
+        decayCounter = 0;
+        previousDecayCounter = 0;
     }
 }
 //--------------------------------------------------------------
@@ -184,7 +206,7 @@ void GameState::drawFood() {
                 ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
                 break;
             default:
-                ofSetColor(ofColor::red);
+                ofSetColor(red, green, 0);
                 ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
                 break;
         }
@@ -248,14 +270,15 @@ void GameState::mousePressed(int x, int y, int button) {}
 
 void GameState::tick(){
     ticks++;
-    if(ticks % 60 == 0){ //60 because 60 ticks are 1 second
+    if(ticks % 150 == 0){
         seconds+=1;
+        decayCounter+=1;
     }
     if(powUp_Speed_Boost==true){
         if(seconds>=timer) powUp_Speed_Boost=false;
     }
     else if(snake->isInmortal()) if(seconds>=timer) snake->setInmortal(false);          
-    
+
 }
 
 //--------------------------------------------------------------
