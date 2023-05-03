@@ -7,6 +7,7 @@ GameState::GameState() {
     boardSizeWidth = 64;
     boardSizeHeight = 36;
     snake = new Snake(cellSize, boardSizeWidth, boardSizeHeight);
+    crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
 }
 //--------------------------------------------------------------
 GameState::~GameState() {
@@ -87,7 +88,7 @@ void GameState::draw() {
     snake->draw();
     drawFood();
     drawEntities();
-
+    drawPath();
     ofSetColor(ofColor::white);
     ofDrawBitmapString("Score: " + ofToString(score), 10, 15);
     ofDrawBitmapString("Current Power Up: " + pow_up_s, 10, 30);
@@ -146,7 +147,12 @@ void GameState::keyPressed(int key) {
             }
             pow_up_s="None";
             break;
-        
+        case 'g':
+            On_Off=!On_Off;
+            path.clear();
+            if(On_Off==true){
+                GPS(snake->getHead()[0],snake->getHead()[1],path);
+            }
     }
 }
 //--------------------------------------------------------------
@@ -242,10 +248,6 @@ void GameState::powUpDisplay(int p_score){
 
 //--------------------------------------------------------------
 
-void GameState::mousePressed(int x, int y, int button) {}
-
-//--------------------------------------------------------------
-
 void GameState::tick(){
     ticks++;
     if(ticks % 60 == 0){ //60 because 60 ticks are 1 second
@@ -257,5 +259,77 @@ void GameState::tick(){
     else if(snake->isInmortal()) if(seconds>=timer) snake->setInmortal(false);          
     
 }
-
 //--------------------------------------------------------------
+
+
+bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
+    // Check if the snake is within the bounds of the maze
+    if (row < 0 || row >= boardSizeWidth || col < 0 || col >= boardSizeHeight) {
+        return false;
+    }
+
+    if (crossedPath[row][col] != 0) return false;
+
+    // Check if the snake found the apple
+    if (currentFoodX == row && currentFoodY == col) {
+        path.emplace_back(row, col);
+        return true;
+    }
+
+    for(StaticEntity e:entities) {
+        if(row == e.getEntityX() && col == e.getEntityY()) {
+            return false;
+        }
+    }
+
+    // Check if the snake revisited a space
+    if (!crossedPath.empty() && crossedPath[row][col] == -1) {
+        path.emplace_back(row, col);
+        return false;
+    }
+
+    // Mark the current cell as visited
+    crossedPath[row][col] = -1;
+
+    // Search Right
+    if (GPS(row, col+1, path)) {
+        path.emplace_back(row, col);
+        return true;
+    }
+
+    // Search Down
+    if (GPS(row+1, col, path)) {
+        path.emplace_back(row, col);
+        return true;
+    }
+
+    // Search Left
+    if (GPS(row, col-1, path)) {
+        path.emplace_back(row, col);
+        return true;
+    }
+
+    // Search Up
+    if (GPS(row-1, col, path)) {
+        path.emplace_back(row, col);
+        return true;
+    }
+
+    // Mark the current cell as unvisited
+    crossedPath[row][col] = 0;
+
+    // No path found
+    return false;
+}
+
+void GameState::drawPath() {
+
+    // Keep looping until we've reached the beginning of the path vector
+    if(!path.empty()){
+        for(auto it=path.crbegin();it!= path.crend()-1;it++) {
+            // Draw the rectangle at the current coordinate
+            ofSetColor(ofColor::orangeRed);
+            ofDrawRectangle(it->first*cellSize, it->second*cellSize, cellSize, cellSize);
+        }
+    }
+}

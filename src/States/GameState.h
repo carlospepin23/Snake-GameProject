@@ -20,13 +20,16 @@ class GameState : public State {
         void drawFood();
         void entitiesSpawner();
         void drawEntities();
-        // void drawStartScreen();
-        // void drawLostScreen();
         void drawBoardGrid();
-        void mousePressed(int x, int y, int button);
         void tick();
-
+        void mousePressed(int x, int y, int button) {}
         int getScore(){return this->last_score;}
+        bool On_Off=false;
+        vector<pair<int, int>>path;
+        bool GPS(int row, int col,vector<pair<int, int>>& p);
+        
+        void drawPath();
+        vector<vector<int>>crossedPath;
 
         Snake* snake;
 

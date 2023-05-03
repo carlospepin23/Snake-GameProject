@@ -8,7 +8,6 @@ protected:
     string name;
     ofColor color;
     int currentEntityX,currentEntityY;
-    // bool crashed; //not implemented
     int cellSize; // Pixels
 
 public:
@@ -22,7 +21,6 @@ public:
     }
     virtual ~Entity(){}
     virtual void tick()=0;
-    virtual void render()=0;
     virtual void update()=0;
     virtual void draw()=0;
     ofColor getColor(){return this->color;}

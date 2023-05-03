@@ -22,12 +22,6 @@ void PauseState::reset() {
 
 //--------------------------------------------------------------
 
-void PauseState::update() {
-
-}
-
-//--------------------------------------------------------------
-
 void PauseState::draw() {
     // ofSetColor(ofColor::black);
     // ofDrawRectangle(0,0,ofGetWidth(),ofGetHeight());
