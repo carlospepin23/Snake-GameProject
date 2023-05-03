@@ -202,8 +202,10 @@ void GameState::keyPressed(int key) {
 void GameState::foodSpawner() {
     if(!foodSpawned) {                                                                                  //Make compatible with speedBoost powup
         bool isInSnakeBody;
+        bool isInEntities;
         do {
             isInSnakeBody = false;
+            isInEntities = false;
             currentFoodX = ofRandom(1, boardSizeWidth-1);
             currentFoodY = ofRandom(1, boardSizeHeight-1);
             for(unsigned int i = 0; i < snake->getBody().size(); i++) {
@@ -211,7 +213,14 @@ void GameState::foodSpawner() {
                     isInSnakeBody = true;
                 }
             }
-        } while(isInSnakeBody);
+            if (!isInSnakeBody) {
+                for (unsigned int i = 0; i < entities.size(); i++) {
+                    if(currentFoodX == entities[i].getEntityX() && currentFoodY == entities[i].getEntityY()){
+                        isInEntities = true;
+                    }
+                }
+            }
+        } while(isInSnakeBody || isInEntities);
         powUpDisplay(p_score);
         foodSpawned = true;
         red = 255;
