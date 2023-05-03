@@ -15,7 +15,6 @@ class GameState : public State {
         void keyPressed(int key);
         void foodSpawner();
         void powUpManager(int score);
-        // void speedBoostManager();
         void powUpDisplay(int p_score);
         void drawFood();
         void entitiesSpawner();
@@ -33,7 +32,7 @@ class GameState : public State {
 
         void drawPathHelper(auto begin, auto end){
             if(begin!=end){
-                ofSetColor(ofColor::orangeRed);
+                ofSetColor(ofColor::lightSalmon);
                 ofDrawRectangle(begin->first*cellSize, begin->second*cellSize, cellSize, cellSize);
                 drawPathHelper(begin+1,end);
             }

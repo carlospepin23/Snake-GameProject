@@ -88,10 +88,10 @@ void GameState::update() {
 //--------------------------------------------------------------
 void GameState::draw() {
     drawBoardGrid();
+    drawPath();
     snake->draw();
     drawFood();
     drawEntities();
-    drawPath();
     ofSetColor(ofColor::white);
     ofDrawBitmapString("Score: " + ofToString(score), 10, 15);
     ofDrawBitmapString("Current Power Up: " + pow_up_s, 10, 30);
@@ -318,7 +318,7 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
 
     //Bulk Decision MAKING (Binary Search IDEA)
 
-            //IZQUIERDA                             //ARRIBA
+        //IZQUIERDA                             //ARRIBA
     if(snakeX<currentFoodX && snakeY<currentFoodY){
         // Search Right
         if (GPS(row, col+1, path)) {
@@ -343,14 +343,9 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
             path.emplace_back(row, col);
             return true;
         }
-    }          //IZQUERDA                           //ABAJO
+    }         
+    //IZQUERDA                           //ABAJO
     if(snakeX<currentFoodX && snakeY>currentFoodY){
-        // Search Right
-        if (GPS(row, col+1, path)) {
-            path.emplace_back(row, col);
-            return true;
-        }
-
         // Search Up
         if (GPS(row-1, col, path)) {
             path.emplace_back(row, col);
@@ -368,13 +363,16 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
             path.emplace_back(row, col);
             return true;
         }
-    }           //DERECHA                               //ARRIBA
+
+        // Search Right
+        if (GPS(row, col+1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+    }           
+    //DERECHA                               //ARRIBA
     if(snakeX>currentFoodX && snakeY<currentFoodY){
-        // Search Left
-        if (GPS(row, col-1, path)) {
-            path.emplace_back(row, col);
-            return true;
-        }
 
         // Search Down
         if (GPS(row+1, col, path)) {
@@ -390,6 +388,12 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
 
         // Search Up
         if (GPS(row-1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Left
+        if (GPS(row, col-1, path)) {
             path.emplace_back(row, col);
             return true;
         }
