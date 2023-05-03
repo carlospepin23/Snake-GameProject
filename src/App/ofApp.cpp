@@ -40,6 +40,14 @@ void ofApp::update(){
 
     }
     currentState->update();
+
+    if (soundPaused) {
+        int elapsedTime = ofGetElapsedTimeMillis() - pausedTime;            // checks the elapsed time since the song was paused
+        if (elapsedTime >= 11000) {                                         // checks if the elapsed time is greater than 11 seconds
+            sound.play();                                                   // and plays the song again.   
+            soundPaused = false;
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -61,7 +69,14 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
     currentState->keyPressed(key);
     if (key == 'p') {
-        sound.stop();
+        sound.setPaused(true);
+    }
+    if (key == 'b') {
+        if (!soundPaused) {
+            sound.setPaused(true);
+            soundPaused = true;                               // pauses the music and stores the song time position.
+            pausedTime = ofGetElapsedTimeMillis();
+        }
     }
 }
 

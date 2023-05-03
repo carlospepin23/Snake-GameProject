@@ -33,6 +33,8 @@ class ofApp : public ofBaseApp{
 		PauseState* pauseState;
 
 		ofSoundPlayer sound;
+		double pausedTime = 0;
+		bool soundPaused = false;
 
 		// float currentSongPosition = sound.getPosition();
 		ofSoundPlayer sound2;

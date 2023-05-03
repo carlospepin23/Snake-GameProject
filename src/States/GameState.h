@@ -61,6 +61,10 @@ class GameState : public State {
 
         int previousDecayCounter = 0;
 
+        ofSoundPlayer sound3;
+        ofSoundPlayer sound4;
+        ofSoundPlayer sound5;
+        ofSoundPlayer sound6;
 
         void rockSpawner() {
             entities.push_back(StaticEntity("rock",ofColor::gray,ofRandom(1, (boardSizeWidth-1)), ofRandom(1, (boardSizeHeight-2)),25));

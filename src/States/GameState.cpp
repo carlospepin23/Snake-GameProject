@@ -7,6 +7,10 @@ GameState::GameState() {
     boardSizeWidth = 64;
     boardSizeHeight = 36;
     snake = new Snake(cellSize, boardSizeWidth, boardSizeHeight);
+    sound3.load("pacman.wav");
+    sound4.load("GodMode.wav");
+    sound5.load("fast.wav");
+    sound6.load("BetterApple.wav");
 }
 //--------------------------------------------------------------
 GameState::~GameState() {
@@ -46,6 +50,10 @@ void GameState::update() {
         powUp_Better_Apple=false;
         powUp_Speed_Boost=false;
         powUp_PacMan_Mode=false;
+        sound3.stop();
+        sound4.stop();
+        sound5.stop();
+        sound6.stop();
         return;
 
     }
@@ -161,21 +169,25 @@ void GameState::keyPressed(int key) {
         case 'b':
             //Declarar el codigo de los powerups
             if(pow_up_s=="SpeedBoost"){
+                sound5.play();
                 ticks=0;
                 seconds=0;
                 timer=15;
                 powUp_Speed_Boost=true;
             }
             else if(pow_up_s=="BetterApple"){
+                sound6.play();
                 powUp_Better_Apple=true;
             }
             else if(pow_up_s=="GodMode"){
+                sound4.play();
                 ticks=0;
                 seconds=0;
                 timer=10;
                 snake->setInmortal(true);
             }
             else if(pow_up_s=="PacMan"){
+                sound3.play();
                 ticks=0;
                 seconds=0;
                 timer=10;
