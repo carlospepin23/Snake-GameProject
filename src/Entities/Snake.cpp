@@ -20,6 +20,21 @@ Snake::~Snake() {
 void Snake::update() {
     vector<int> oldHead = this->getHead();
 
+    if (isInmortal() == false) {
+        if(oldHead[0] == -1 || oldHead[0] == boardSizeWidth || oldHead[1] == -1 || oldHead[1] == boardSizeHeight) {
+            if(isInmortal()==false){
+                crashed = true;
+                return;
+            }
+        }
+    } 
+    else {
+        if ((getHead()[0] == 0 && direction == LEFT) || (getHead()[0] == boardSizeWidth - 1 && direction == RIGHT)
+        || (getHead()[1] == 0 && direction == UP) || (getHead()[1] == boardSizeHeight - 1 && direction == DOWN)) {
+            changeDirection(NONE);
+        }
+    }
+
     switch(this->direction) {
         case LEFT: {
             this->body[0][0] -= 1;
@@ -42,30 +57,21 @@ void Snake::update() {
         }
     }
 
-    if(oldHead[0] == -1 || oldHead[0] == boardSizeWidth || oldHead[1] == -1 || oldHead[1] == boardSizeHeight) {
-        if(isInmortal()==false){
-            crashed = true;
-            return;
+    if (direction != NONE) {
+        int prevX = oldHead[0];
+        int prevY = oldHead[1];
+        for (unsigned int i = 1; i < this->body.size(); i++) {
+            int currX = this->body[i][0];
+            int currY = this->body[i][1];
+            this->body[i][0] = prevX;
+            this->body[i][1] = prevY;
+            prevX = currX;
+            prevY = currY;
         }
-        stop(); //El snake se queda inmovil si toca los limites en GodMode
-        return;
-    }
-    
-
-    int prevX = oldHead[0];
-    int prevY = oldHead[1];
-    for (unsigned int i = 1; i < this->body.size(); i++) {
-        int currX = this->body[i][0];
-        int currY = this->body[i][1];
-        this->body[i][0] = prevX;
-        this->body[i][1] = prevY;
-        prevX = currX;
-        prevY = currY;
     }
     if(isInmortal()==false){
         checkSelfCrash();
     }
-
 }
 
 void Snake::draw() {
@@ -111,15 +117,6 @@ void Snake::grow() {
     this->body.push_back(newSegment);
 }
 
-void Snake::stop(){                                             //Fix stop function
-    int prevX = this->body[this->body.size()-1][0];                 
-    int prevY = this->body[this->body.size()-1][1];
-    for (unsigned int i = this->body.size()-1; i > 0; i--) {
-        int currX = this->body[i-1][0];
-        int currY = this->body[i-1][1];
-        this->body[i][0] = currX;
-        this->body[i][1] = currY;
-    }
-    this->body[0][0] = prevX;
-    this->body[0][1] = prevY;
+void Snake::ignoreCrash() {
+    this->crashed = false;
 }

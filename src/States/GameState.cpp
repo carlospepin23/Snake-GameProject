@@ -66,8 +66,11 @@ void GameState::update() {
 
     for(unsigned int i=0;i<entities.size();i++){
         if(snake->getHead()[0] == entities[i].getEntityX() && snake->getHead()[1] == entities[i].getEntityY()){
-            if(snake->isInmortal()==false) snake->setCrashed(true);
-            else snake->stop();
+            if(snake->isInmortal()==false) { 
+                snake->setCrashed(true);
+            } else {
+                snake->ignoreCrash();
+            }
         }  
     }
 

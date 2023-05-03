@@ -30,7 +30,7 @@ public:
     void grow();
     bool isCrashed() {return this->crashed;}
     bool isInmortal() {return this->inmortal;}
-    void stop();
+    void ignoreCrash();
     void setCrashed(bool b){this->crashed=b;}
     void setInmortal(bool i){this->inmortal=i;}
     std::vector<int> getHead() {

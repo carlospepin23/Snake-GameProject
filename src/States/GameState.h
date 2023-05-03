@@ -61,6 +61,8 @@ class GameState : public State {
 
         int previousDecayCounter = 0;
 
+        bool collided = false;
+
 
         void rockSpawner() {
             entities.push_back(StaticEntity("rock",ofColor::gray,ofRandom(1, (boardSizeWidth-1)), ofRandom(1, (boardSizeHeight-2)),25));
