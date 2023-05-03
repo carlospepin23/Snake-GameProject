@@ -45,6 +45,7 @@ void GameState::update() {
         seconds=0;
         powUp_Better_Apple=false;
         powUp_Speed_Boost=false;
+        powUp_PacMan_Mode=false;
         return;
 
     }
@@ -66,10 +67,16 @@ void GameState::update() {
 
     for(unsigned int i=0;i<entities.size();i++){
         if(snake->getHead()[0] == entities[i].getEntityX() && snake->getHead()[1] == entities[i].getEntityY()){
-            if(snake->isInmortal()==false) { 
+            if(snake->isInmortal()==false && powUp_PacMan_Mode==false) { 
                 snake->setCrashed(true);
-            } else {
+            } 
+            else if(snake->isInmortal()==true && powUp_PacMan_Mode==false) {
                 snake->ignoreCrash();
+            }
+            else {
+                if (powUp_PacMan_Mode == true) {
+                    entities.erase(entities.begin()+i);
+                }
             }
         }  
     }
@@ -81,7 +88,7 @@ void GameState::update() {
 
     if (snake->getHead()[0] == currentFoodX && snake->getHead()[1] == currentFoodY) {
         score += 10;
-        p_score=(p_score%150)+10;
+        p_score=(p_score%260)+10;
     }
 }
 //--------------------------------------------------------------
@@ -100,8 +107,11 @@ void GameState::draw() {
     else if(snake->isInmortal()){
         ofDrawBitmapString("GodMode remaining seconds: " + ofToString(timer-seconds), 10, 45);
     }
-    else{
-        if (foodSpawned==true && pow_up != 1 && pow_up != 2 && pow_up != 3){
+    else if(powUp_PacMan_Mode==true){
+        ofDrawBitmapString("PacMan Mode remaining seconds: " + ofToString(timer-seconds), 10, 45);
+    }
+    else {
+        if (foodSpawned==true && pow_up != 1 && pow_up != 2 && pow_up != 3 && pow_up != 4){
             ofDrawBitmapString("Hurry! Get the food: " + ofToString(30-decayCounter), 10, 45);
         }
         else{
@@ -109,13 +119,13 @@ void GameState::draw() {
         }
     }
     
-    if(decayCounter > previousDecayCounter && pow_up != 1 && pow_up != 2 && pow_up != 3){
+    if(decayCounter > previousDecayCounter && pow_up != 1 && pow_up != 2 && pow_up != 3 && pow_up != 4){
         previousDecayCounter = decayCounter;
         red -= 4;
         green += 3;
     }
 
-    if(decayCounter == 30 && pow_up != 1 && pow_up != 2 && pow_up != 3){
+    if(decayCounter == 30 && pow_up != 1 && pow_up != 2 && pow_up != 3 && pow_up != 4){
         foodSpawned = false;
     }
 }
@@ -139,7 +149,7 @@ void GameState::keyPressed(int key) {
             break;
         case 'a':
             score+=10;
-            p_score=(p_score%150)+10;
+            p_score=(p_score%260)+10;
             break;
         case 'u':
             if(snake->getBody().size()>2) snake->removeSegment();
@@ -164,6 +174,12 @@ void GameState::keyPressed(int key) {
                 seconds=0;
                 timer=10;
                 snake->setInmortal(true);
+            }
+            else if(pow_up_s=="PacMan"){
+                ticks=0;
+                seconds=0;
+                timer=10;
+                powUp_PacMan_Mode=true;
             }
             pow_up_s="None";
             break;
@@ -206,6 +222,10 @@ void GameState::drawFood() {
                 break;
             case 3:
                 ofSetColor(ofColor::white);
+                ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
+                break;
+            case 4:
+                ofSetColor(ofColor::yellow);
                 ofDrawRectangle(currentFoodX*cellSize, currentFoodY*cellSize, cellSize, cellSize);
                 break;
             default:
@@ -251,6 +271,7 @@ void GameState::powUpManager(int p_score){
     if(p_score==50) pow_up=1;
     else if(p_score==100 && powUp_Better_Apple==false) pow_up=2;
     else if(p_score==150) pow_up=3;
+    else if(p_score==250) pow_up=4;
     else pow_up=0;
     
 }
@@ -262,7 +283,8 @@ void GameState::powUpDisplay(int p_score){
     //Texto PowUps
     if(p_score==60) pow_up_s="SpeedBoost";
     else if (p_score==110 && powUp_Better_Apple==false) pow_up_s="BetterApple";
-    else if (p_score==10 && score!=10) pow_up_s="GodMode";
+    else if (p_score==160) pow_up_s="GodMode";
+    else if (p_score==260) pow_up_s="PacMan";
 }
 
 //--------------------------------------------------------------
@@ -280,8 +302,14 @@ void GameState::tick(){
     if(powUp_Speed_Boost==true){
         if(seconds>=timer) powUp_Speed_Boost=false;
     }
-    else if(snake->isInmortal()) if(seconds>=timer) snake->setInmortal(false);          
-
+    else if(snake->isInmortal()){
+        if(seconds>=timer){
+            snake->setInmortal(false); 
+        }
+    }
+    else if(powUp_PacMan_Mode==true){
+        if(seconds>=timer) powUp_PacMan_Mode=false;
+    }
 }
 
 //--------------------------------------------------------------

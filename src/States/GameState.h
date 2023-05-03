@@ -45,7 +45,7 @@ class GameState : public State {
         int score = 0;
         bool entitySpawned = false;
         int p_score=0;
-        bool powUp_Better_Apple=false, powUp_Speed_Boost=false;
+        bool powUp_Better_Apple=false, powUp_Speed_Boost=false, powUp_PacMan_Mode=false;
         string pow_up_s="None";
         unsigned int pow_up=0;
         int ticks=0;
@@ -60,8 +60,6 @@ class GameState : public State {
         int foodTimer = 30;
 
         int previousDecayCounter = 0;
-
-        bool collided = false;
 
 
         void rockSpawner() {
