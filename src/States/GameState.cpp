@@ -7,7 +7,6 @@ GameState::GameState() {
     boardSizeWidth = 64;
     boardSizeHeight = 36;
     snake = new Snake(cellSize, boardSizeWidth, boardSizeHeight);
-    crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
 }
 //--------------------------------------------------------------
 GameState::~GameState() {
@@ -24,9 +23,7 @@ void GameState::reset() {
     else {
     delete snake;
     entities.clear();
-    path.clear();
-    crossedPath.clear();
-    crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
+    if(On_Off) On_Off=!On_Off;
     snake = new Snake(cellSize, boardSizeWidth, boardSizeHeight);
     foodSpawned = false;
     entitySpawned=false;
@@ -88,7 +85,13 @@ void GameState::update() {
 //--------------------------------------------------------------
 void GameState::draw() {
     drawBoardGrid();
-    drawPath();
+    if(On_Off){
+        path.clear();
+        crossedPath.clear();
+        crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
+        GPS(snake->getHead()[0],snake->getHead()[1],path);
+        drawPath();
+    }
     snake->draw();
     drawFood();
     drawEntities();
@@ -152,12 +155,6 @@ void GameState::keyPressed(int key) {
             break;
         case 'g':
             On_Off=!On_Off;
-            path.clear();
-            crossedPath.clear();
-            crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
-            if(On_Off==true){
-                GPS(snake->getHead()[0],snake->getHead()[1],path);
-            }
     }
 }
 //--------------------------------------------------------------
@@ -175,9 +172,7 @@ void GameState::foodSpawner() {
             }
         } while(isInSnakeBody);
         powUpDisplay(p_score);
-        path.clear();
-        crossedPath.clear();
-        crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
+        if(On_Off) On_Off=!On_Off;
         foodSpawned = true;
     }
 }
@@ -281,19 +276,19 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
     //Search Sharpener
     
     //SNAKE IZQUIERDA DE MANZANA
-    if(snakeX<currentFoodX){
+    if(snakeX<=currentFoodX){
         if(row>currentFoodX || row<snake->getHead()[0]) return false;
     }
     //SNAKE DERECHA DE MANZANA
-    if(snakeX>currentFoodX){
+    if(snakeX>=currentFoodX){
         if(row<currentFoodX || row>snake->getHead()[0]) return false;
     }
     //SNAKE ARRIBA DE MANZANA
-    if(snakeY<currentFoodY){
+    if(snakeY<=currentFoodY){
         if(col>currentFoodY || col<snake->getHead()[1]) return false;
     }
     //SNAKE ABAJO DE MANZANA
-    if(snakeY>currentFoodY){
+    if(snakeY>=currentFoodY){
         if(col<currentFoodY || col>snake->getHead()[1]) return false;
     }
 
@@ -318,8 +313,8 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
 
     //Bulk Decision MAKING (Binary Search IDEA)
 
-        //IZQUIERDA                             //ARRIBA
-    if(snakeX<currentFoodX && snakeY<currentFoodY){
+    //Snake IZQUIERDA Y ARRIBA  //CUBRE POLO OESTE
+    if(snakeX<=currentFoodX && snakeY<currentFoodY){
         // Search Right
         if (GPS(row, col+1, path)) {
             path.emplace_back(row, col);
@@ -344,8 +339,8 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
             return true;
         }
     }         
-    //IZQUERDA                           //ABAJO
-    if(snakeX<currentFoodX && snakeY>currentFoodY){
+    //Snake IZQUERDA Y ABAJO //CUBRE POLO NORTE
+    if(snakeX<currentFoodX && snakeY>=currentFoodY){
         // Search Up
         if (GPS(row-1, col, path)) {
             path.emplace_back(row, col);
@@ -371,8 +366,8 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
         }
 
     }           
-    //DERECHA                               //ARRIBA
-    if(snakeX>currentFoodX && snakeY<currentFoodY){
+    //Snake DERECHA Y ARRIBA //CUBRE POLO SUR
+    if(snakeX>currentFoodX && snakeY<=currentFoodY){
 
         // Search Down
         if (GPS(row+1, col, path)) {
@@ -398,8 +393,8 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
             return true;
         }
 
-    }              //DERECHA                        ABAJO
-    if(snakeX>currentFoodX && snakeY>currentFoodY){
+    }   //Snake DERECHA Y ABAJO //CUBRE POLO ESTE
+    if(snakeX>=currentFoodX && snakeY>currentFoodY){
         // Search Left
         if (GPS(row, col-1, path)) {
             path.emplace_back(row, col);

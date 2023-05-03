@@ -14,17 +14,22 @@ class GameState : public State {
         void draw();
         void keyPressed(int key);
         void foodSpawner();
-        void powUpManager(int score);
-        void powUpDisplay(int p_score);
         void drawFood();
-        void entitiesSpawner();
-        void drawEntities();
         void drawBoardGrid();
         void tick();
         void mousePressed(int x, int y, int button) {}
         int getScore(){return this->last_score;}
-
-//------------------------------
+        
+        Snake* snake;
+        int cellSize; // Pixels
+        bool foodSpawned = false;
+        int currentFoodX;
+        int currentFoodY;
+        int boardSizeWidth, boardSizeHeight;
+        int last_score=0;
+        int score = 0;
+//--------------------------------------------------------------------------------
+//------GPS FUNCTION--------------------------------------------------------------
         bool On_Off=false;
         vector<pair<int, int>>path;
         vector<vector<int>>crossedPath;
@@ -39,7 +44,7 @@ class GameState : public State {
         }
 
         void drawPath(){
-            if(!path.empty()) drawPathHelper(path.crbegin()+1,path.crend()-1);
+            if(!path.empty()) drawPathHelper(path.crbegin()+1,path.crend());
             
         }
 
@@ -52,24 +57,8 @@ class GameState : public State {
             }
             return false;
         }
-//----------------------------
-
-        Snake* snake;
-
-        //Entities
-        vector<StaticEntity> entities;
-
-        int cellSize; // Pixels
-
-        bool foodSpawned = false;
-
-        int currentFoodX;
-        int currentFoodY;
-
-        int boardSizeWidth, boardSizeHeight;
-        int last_score=0;
-        int score = 0;
-        bool entitySpawned = false;
+//--------------------------------------------------------------------------------------
+//------Power Ups FUNCTIONS-------------------------------------------------------------
         int p_score=0;
         bool powUp_Better_Apple=false, powUp_Speed_Boost=false;
         string pow_up_s="None";
@@ -77,7 +66,14 @@ class GameState : public State {
         int ticks=0;
         int seconds=0;
         int timer=0;
-
+        void powUpManager(int score);
+        void powUpDisplay(int p_score);
+//--------------------------------------------------------------------------------------
+//------Entities FUNCTION--------------------------------------------------------------
+        vector<StaticEntity> entities;
+        bool entitySpawned = false;
+        void entitiesSpawner();
+        void drawEntities();
 
         void rockSpawner() {
             entities.push_back(StaticEntity("rock",ofColor::gray,ofRandom(1, (boardSizeWidth-1)), ofRandom(1, (boardSizeHeight-2)),25));
