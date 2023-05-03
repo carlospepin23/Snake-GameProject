@@ -24,6 +24,7 @@ void GameState::reset() {
     else {
     delete snake;
     entities.clear();
+    path.clear();
     snake = new Snake(cellSize, boardSizeWidth, boardSizeHeight);
     foodSpawned = false;
     entitySpawned=false;
@@ -170,6 +171,7 @@ void GameState::foodSpawner() {
             }
         } while(isInSnakeBody);
         powUpDisplay(p_score);
+        path.clear();
         foodSpawned = true;
     }
 }
@@ -262,7 +264,7 @@ void GameState::tick(){
 //--------------------------------------------------------------
 
 
-bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
+bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) { //a la tercera activacion del programa se rompe
     // Check if the snake is within the bounds of the maze
     if (row < 0 || row >= boardSizeWidth || col < 0 || col >= boardSizeHeight) {
         return false;
@@ -270,13 +272,27 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
 
     if (crossedPath[row][col] != 0) return false;
 
+    //Search Sharpener
+    if(snake->getHead()[0]<currentFoodX){
+        if(row>currentFoodX) return false;
+    }
+    if(snake->getHead()[0]>currentFoodX){
+        if(row<currentFoodX) return false;
+    }
+    if(snake->getHead()[1]<currentFoodY){
+        if(col>currentFoodY) return false;
+    }
+    if(snake->getHead()[1]>currentFoodY){
+        if(col<currentFoodY) return false;
+    }
+
     // Check if the snake found the apple
     if (currentFoodX == row && currentFoodY == col) {
         path.emplace_back(row, col);
         return true;
     }
-
-    for(StaticEntity e:entities) {
+    
+    for(StaticEntity e:entities) {//Change to recursive
         if(row == e.getEntityX() && col == e.getEntityY()) {
             return false;
         }
@@ -291,29 +307,110 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
     // Mark the current cell as visited
     crossedPath[row][col] = -1;
 
-    // Search Right
-    if (GPS(row, col+1, path)) {
-        path.emplace_back(row, col);
-        return true;
+    //Bulk Decision MAKING (Binary Search IDEA)
+    if(snake->getHead()[0]<currentFoodX && snake->getHead()[1]<currentFoodY){
+        // Search Right
+        if (GPS(row, col+1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Down
+        if (GPS(row+1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Left
+        if (GPS(row, col-1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Up
+        if (GPS(row-1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+    }
+    else if(snake->getHead()[0]<currentFoodX && snake->getHead()[1]>currentFoodY){
+        // Search Right
+        if (GPS(row, col+1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Up
+        if (GPS(row-1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Left
+        if (GPS(row, col-1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Down
+        if (GPS(row+1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+    }
+    else if(snake->getHead()[0]>currentFoodX && snake->getHead()[1]<currentFoodY){
+        // Search Left
+        if (GPS(row, col-1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Down
+        if (GPS(row+1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Right
+        if (GPS(row, col+1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Up
+        if (GPS(row-1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+    }
+    else if(snake->getHead()[0]>currentFoodX && snake->getHead()[1]>currentFoodY){
+        // Search Left
+        if (GPS(row, col-1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Up
+        if (GPS(row-1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Right
+        if (GPS(row, col+1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Down
+        if (GPS(row+1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
     }
 
-    // Search Down
-    if (GPS(row+1, col, path)) {
-        path.emplace_back(row, col);
-        return true;
-    }
-
-    // Search Left
-    if (GPS(row, col-1, path)) {
-        path.emplace_back(row, col);
-        return true;
-    }
-
-    // Search Up
-    if (GPS(row-1, col, path)) {
-        path.emplace_back(row, col);
-        return true;
-    }
 
     // Mark the current cell as unvisited
     crossedPath[row][col] = 0;
@@ -322,11 +419,11 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
     return false;
 }
 
-void GameState::drawPath() {
+void GameState::drawPath() { //Change tu recursive
 
     // Keep looping until we've reached the beginning of the path vector
     if(!path.empty()){
-        for(auto it=path.crbegin();it!= path.crend()-1;it++) {
+        for(auto it=path.crbegin()+1;it!= path.crend()-1;it++) {
             // Draw the rectangle at the current coordinate
             ofSetColor(ofColor::orangeRed);
             ofDrawRectangle(it->first*cellSize, it->second*cellSize, cellSize, cellSize);
