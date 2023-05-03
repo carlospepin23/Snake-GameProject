@@ -27,14 +27,32 @@ class GameState : public State {
 
 //------------------------------
         bool On_Off=false;
-
         vector<pair<int, int>>path;
-        bool GPS(int row, int col,vector<pair<int, int>>& p);
-        
-        void drawPath();
         vector<vector<int>>crossedPath;
+        bool GPS(int row, int col,vector<pair<int, int>>& p);
 
+        void drawPathHelper(auto begin, auto end){
+            if(begin!=end){
+                ofSetColor(ofColor::orangeRed);
+                ofDrawRectangle(begin->first*cellSize, begin->second*cellSize, cellSize, cellSize);
+                drawPathHelper(begin+1,end);
+            }
+        }
 
+        void drawPath(){
+            if(!path.empty()) drawPathHelper(path.crbegin()+1,path.crend()-1);
+            
+        }
+
+        bool hasCrashed_Entities(int r, int c,unsigned int index){
+            if(index<entities.size()){
+                if(r == entities[index].getEntityX() && c == entities[index].getEntityY()) {
+                    return true;
+                }
+                return hasCrashed_Entities(r,c,index+1);
+            }
+            return false;
+        }
 //----------------------------
 
         Snake* snake;

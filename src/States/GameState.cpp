@@ -25,6 +25,8 @@ void GameState::reset() {
     delete snake;
     entities.clear();
     path.clear();
+    crossedPath.clear();
+    crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
     snake = new Snake(cellSize, boardSizeWidth, boardSizeHeight);
     foodSpawned = false;
     entitySpawned=false;
@@ -151,6 +153,8 @@ void GameState::keyPressed(int key) {
         case 'g':
             On_Off=!On_Off;
             path.clear();
+            crossedPath.clear();
+            crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
             if(On_Off==true){
                 GPS(snake->getHead()[0],snake->getHead()[1],path);
             }
@@ -172,6 +176,8 @@ void GameState::foodSpawner() {
         } while(isInSnakeBody);
         powUpDisplay(p_score);
         path.clear();
+        crossedPath.clear();
+        crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
         foodSpawned = true;
     }
 }
@@ -202,7 +208,7 @@ void GameState::drawFood() {
 //--------------------------------------------------------------
 void GameState::entitiesSpawner() { //method in charge of creating and adding entities
     if(!entitySpawned){
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 20; i++){
             int randNum = ofRandom(1,4);
             if(randNum == 1) rockSpawner();
             else if(randNum == 2) treeSpawner();
@@ -218,8 +224,6 @@ void GameState::drawEntities() { //method in charge of drawing all the entities
             entities[i].draw();
         }
     }
-
-    
 }
 
 void GameState::drawBoardGrid() {
@@ -264,7 +268,9 @@ void GameState::tick(){
 //--------------------------------------------------------------
 
 
-bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) { //a la tercera activacion del programa se rompe
+bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
+    int snakeX=snake->getHead()[0];
+    int snakeY=snake->getHead()[1]; 
     // Check if the snake is within the bounds of the maze
     if (row < 0 || row >= boardSizeWidth || col < 0 || col >= boardSizeHeight) {
         return false;
@@ -273,17 +279,22 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) { //a la ter
     if (crossedPath[row][col] != 0) return false;
 
     //Search Sharpener
-    if(snake->getHead()[0]<currentFoodX){
-        if(row>currentFoodX) return false;
+    
+    //SNAKE IZQUIERDA DE MANZANA
+    if(snakeX<currentFoodX){
+        if(row>currentFoodX || row<snake->getHead()[0]) return false;
     }
-    if(snake->getHead()[0]>currentFoodX){
-        if(row<currentFoodX) return false;
+    //SNAKE DERECHA DE MANZANA
+    if(snakeX>currentFoodX){
+        if(row<currentFoodX || row>snake->getHead()[0]) return false;
     }
-    if(snake->getHead()[1]<currentFoodY){
-        if(col>currentFoodY) return false;
+    //SNAKE ARRIBA DE MANZANA
+    if(snakeY<currentFoodY){
+        if(col>currentFoodY || col<snake->getHead()[1]) return false;
     }
-    if(snake->getHead()[1]>currentFoodY){
-        if(col<currentFoodY) return false;
+    //SNAKE ABAJO DE MANZANA
+    if(snakeY>currentFoodY){
+        if(col<currentFoodY || col>snake->getHead()[1]) return false;
     }
 
     // Check if the snake found the apple
@@ -291,11 +302,9 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) { //a la ter
         path.emplace_back(row, col);
         return true;
     }
-    
-    for(StaticEntity e:entities) {//Change to recursive
-        if(row == e.getEntityX() && col == e.getEntityY()) {
-            return false;
-        }
+    //Chequea si snake encuentra entities
+    if(hasCrashed_Entities(row,col,0)){
+        return false;
     }
 
     // Check if the snake revisited a space
@@ -308,7 +317,9 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) { //a la ter
     crossedPath[row][col] = -1;
 
     //Bulk Decision MAKING (Binary Search IDEA)
-    if(snake->getHead()[0]<currentFoodX && snake->getHead()[1]<currentFoodY){
+
+            //IZQUIERDA                             //ARRIBA
+    if(snakeX<currentFoodX && snakeY<currentFoodY){
         // Search Right
         if (GPS(row, col+1, path)) {
             path.emplace_back(row, col);
@@ -332,8 +343,8 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) { //a la ter
             path.emplace_back(row, col);
             return true;
         }
-    }
-    else if(snake->getHead()[0]<currentFoodX && snake->getHead()[1]>currentFoodY){
+    }          //IZQUERDA                           //ABAJO
+    if(snakeX<currentFoodX && snakeY>currentFoodY){
         // Search Right
         if (GPS(row, col+1, path)) {
             path.emplace_back(row, col);
@@ -357,8 +368,8 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) { //a la ter
             path.emplace_back(row, col);
             return true;
         }
-    }
-    else if(snake->getHead()[0]>currentFoodX && snake->getHead()[1]<currentFoodY){
+    }           //DERECHA                               //ARRIBA
+    if(snakeX>currentFoodX && snakeY<currentFoodY){
         // Search Left
         if (GPS(row, col-1, path)) {
             path.emplace_back(row, col);
@@ -383,8 +394,8 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) { //a la ter
             return true;
         }
 
-    }
-    else if(snake->getHead()[0]>currentFoodX && snake->getHead()[1]>currentFoodY){
+    }              //DERECHA                        ABAJO
+    if(snakeX>currentFoodX && snakeY>currentFoodY){
         // Search Left
         if (GPS(row, col-1, path)) {
             path.emplace_back(row, col);
@@ -417,16 +428,4 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) { //a la ter
 
     // No path found
     return false;
-}
-
-void GameState::drawPath() { //Change tu recursive
-
-    // Keep looping until we've reached the beginning of the path vector
-    if(!path.empty()){
-        for(auto it=path.crbegin()+1;it!= path.crend()-1;it++) {
-            // Draw the rectangle at the current coordinate
-            ofSetColor(ofColor::orangeRed);
-            ofDrawRectangle(it->first*cellSize, it->second*cellSize, cellSize, cellSize);
-        }
-    }
 }
