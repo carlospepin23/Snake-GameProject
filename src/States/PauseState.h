@@ -9,10 +9,10 @@ public:
     PauseState();
     ~PauseState();
     void reset();
-    void update();
     void draw();
     void keyPressed(int key);
     void mousePressed(int x, int y, int button);
+    void update(){}
     void tick() {}
     int getScore(){return 0;}
 

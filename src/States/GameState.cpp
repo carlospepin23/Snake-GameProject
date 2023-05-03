@@ -27,6 +27,7 @@ void GameState::reset() {
     else {
     delete snake;
     entities.clear();
+    if(On_Off) On_Off=!On_Off;
     snake = new Snake(cellSize, boardSizeWidth, boardSizeHeight);
     foodSpawned = false;
     entitySpawned=false;
@@ -102,10 +103,16 @@ void GameState::update() {
 //--------------------------------------------------------------
 void GameState::draw() {
     drawBoardGrid();
+    if(On_Off){
+        path.clear();
+        crossedPath.clear();
+        crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
+        GPS(snake->getHead()[0],snake->getHead()[1],path);
+        drawPath();
+    }
     snake->draw();
     drawFood();
     drawEntities();
-
     ofSetColor(ofColor::white);
     ofDrawBitmapString("Score: " + ofToString(score), 10, 15);
     ofDrawBitmapString("Current Power Up: " + pow_up_s, 10, 30);
@@ -195,7 +202,8 @@ void GameState::keyPressed(int key) {
             }
             pow_up_s="None";
             break;
-        
+        case 'g':
+            On_Off=!On_Off;
     }
 }
 //--------------------------------------------------------------
@@ -222,6 +230,7 @@ void GameState::foodSpawner() {
             }
         } while(isInSnakeBody || isInEntities);
         powUpDisplay(p_score);
+        if(On_Off) On_Off=!On_Off;
         foodSpawned = true;
         red = 255;
         green = 0;
@@ -260,7 +269,7 @@ void GameState::drawFood() {
 //--------------------------------------------------------------
 void GameState::entitiesSpawner() { //method in charge of creating and adding entities
     if(!entitySpawned){
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 20; i++){
             int randNum = ofRandom(1,4);
             if(randNum == 1) rockSpawner();
             else if(randNum == 2) treeSpawner();
@@ -276,8 +285,6 @@ void GameState::drawEntities() { //method in charge of drawing all the entities
             entities[i].draw();
         }
     }
-
-    
 }
 
 void GameState::drawBoardGrid() {
@@ -310,10 +317,6 @@ void GameState::powUpDisplay(int p_score){
 
 //--------------------------------------------------------------
 
-void GameState::mousePressed(int x, int y, int button) {}
-
-//--------------------------------------------------------------
-
 void GameState::tick(){
     ticks++;
     if(ticks % 150 == 0){
@@ -332,5 +335,171 @@ void GameState::tick(){
         if(seconds>=timer) powUp_PacMan_Mode=false;
     }
 }
-
 //--------------------------------------------------------------
+
+
+bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
+    int snakeX=snake->getHead()[0];
+    int snakeY=snake->getHead()[1]; 
+    // Check if the snake is within the bounds of the maze
+    if (row < 0 || row >= boardSizeWidth || col < 0 || col >= boardSizeHeight) {
+        return false;
+    }
+
+    if (crossedPath[row][col] != 0) return false;
+
+    //Search Sharpener
+    
+    //SNAKE IZQUIERDA DE MANZANA
+    if(snakeX<=currentFoodX){
+        if(row>currentFoodX || row<snake->getHead()[0]) return false;
+    }
+    //SNAKE DERECHA DE MANZANA
+    if(snakeX>=currentFoodX){
+        if(row<currentFoodX || row>snake->getHead()[0]) return false;
+    }
+    //SNAKE ARRIBA DE MANZANA
+    if(snakeY<=currentFoodY){
+        if(col>currentFoodY || col<snake->getHead()[1]) return false;
+    }
+    //SNAKE ABAJO DE MANZANA
+    if(snakeY>=currentFoodY){
+        if(col<currentFoodY || col>snake->getHead()[1]) return false;
+    }
+
+    // Check if the snake found the apple
+    if (currentFoodX == row && currentFoodY == col) {
+        path.emplace_back(row, col);
+        return true;
+    }
+    //Chequea si snake encuentra entities
+    if(hasCrashed_Entities(row,col,0)){
+        return false;
+    }
+
+    // Check if the snake revisited a space
+    if (!crossedPath.empty() && crossedPath[row][col] == -1) {
+        path.emplace_back(row, col);
+        return false;
+    }
+
+    // Mark the current cell as visited
+    crossedPath[row][col] = -1;
+
+    //Bulk Decision MAKING (Binary Search IDEA)
+
+    //Snake IZQUIERDA Y ARRIBA  //CUBRE POLO OESTE
+    if(snakeX<=currentFoodX && snakeY<currentFoodY){
+        // Search Right
+        if (GPS(row, col+1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Down
+        if (GPS(row+1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Left
+        if (GPS(row, col-1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Up
+        if (GPS(row-1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+    }         
+    //Snake IZQUERDA Y ABAJO //CUBRE POLO NORTE
+    if(snakeX<currentFoodX && snakeY>=currentFoodY){
+        // Search Up
+        if (GPS(row-1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Left
+        if (GPS(row, col-1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Down
+        if (GPS(row+1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Right
+        if (GPS(row, col+1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+    }           
+    //Snake DERECHA Y ARRIBA //CUBRE POLO SUR
+    if(snakeX>currentFoodX && snakeY<=currentFoodY){
+
+        // Search Down
+        if (GPS(row+1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Right
+        if (GPS(row, col+1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Up
+        if (GPS(row-1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Left
+        if (GPS(row, col-1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+    }   //Snake DERECHA Y ABAJO //CUBRE POLO ESTE
+    if(snakeX>=currentFoodX && snakeY>currentFoodY){
+        // Search Left
+        if (GPS(row, col-1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Up
+        if (GPS(row-1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Right
+        if (GPS(row, col+1, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+        // Search Down
+        if (GPS(row+1, col, path)) {
+            path.emplace_back(row, col);
+            return true;
+        }
+
+    }
+
+
+    // Mark the current cell as unvisited
+    crossedPath[row][col] = 0;
+
+    // No path found
+    return false;
+}

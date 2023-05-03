@@ -14,36 +14,60 @@ class GameState : public State {
         void draw();
         void keyPressed(int key);
         void foodSpawner();
-        void powUpManager(int score);
-        // void speedBoostManager();
-        void powUpDisplay(int p_score);
         void drawFood();
-        void entitiesSpawner();
-        void drawEntities();
-        // void drawStartScreen();
-        // void drawLostScreen();
         void drawBoardGrid();
-        void mousePressed(int x, int y, int button);
         void tick();
-
+        void mousePressed(int x, int y, int button) {}
         int getScore(){return this->last_score;}
-
+        
         Snake* snake;
-
-        //Entities
-        vector<StaticEntity> entities;
-
         int cellSize; // Pixels
-
         bool foodSpawned = false;
-
         int currentFoodX;
         int currentFoodY;
-
         int boardSizeWidth, boardSizeHeight;
         int last_score=0;
         int score = 0;
-        bool entitySpawned = false;
+        int green = 0;
+        int red = 255;
+        int decayCounter = 0;
+        int foodTimer = 30;
+        int previousDecayCounter = 0;
+        ofSoundPlayer sound3;
+        ofSoundPlayer sound4;
+        ofSoundPlayer sound5;
+        ofSoundPlayer sound6;
+//--------------------------------------------------------------------------------
+//------GPS FUNCTION--------------------------------------------------------------
+        bool On_Off=false;
+        vector<pair<int, int>>path;
+        vector<vector<int>>crossedPath;
+        bool GPS(int row, int col,vector<pair<int, int>>& p);
+
+        void drawPathHelper(auto begin, auto end){
+            if(begin!=end){
+                ofSetColor(ofColor::lightSalmon);
+                ofDrawRectangle(begin->first*cellSize, begin->second*cellSize, cellSize, cellSize);
+                drawPathHelper(begin+1,end);
+            }
+        }
+
+        void drawPath(){
+            if(!path.empty()) drawPathHelper(path.crbegin()+1,path.crend());
+            
+        }
+
+        bool hasCrashed_Entities(int r, int c,unsigned int index){
+            if(index<entities.size()){
+                if(r == entities[index].getEntityX() && c == entities[index].getEntityY()) {
+                    return true;
+                }
+                return hasCrashed_Entities(r,c,index+1);
+            }
+            return false;
+        }
+//--------------------------------------------------------------------------------------
+//------Power Ups FUNCTIONS-------------------------------------------------------------
         int p_score=0;
         bool powUp_Better_Apple=false, powUp_Speed_Boost=false, powUp_PacMan_Mode=false;
         string pow_up_s="None";
@@ -51,20 +75,14 @@ class GameState : public State {
         int ticks=0;
         int seconds=0;
         int timer=0;
-
-        int green = 0;
-        int red = 255;
-
-        int decayCounter = 0;
-
-        int foodTimer = 30;
-
-        int previousDecayCounter = 0;
-
-        ofSoundPlayer sound3;
-        ofSoundPlayer sound4;
-        ofSoundPlayer sound5;
-        ofSoundPlayer sound6;
+        void powUpManager(int score);
+        void powUpDisplay(int p_score);
+//--------------------------------------------------------------------------------------
+//------Entities FUNCTION--------------------------------------------------------------
+        vector<StaticEntity> entities;
+        bool entitySpawned = false;
+        void entitiesSpawner();
+        void drawEntities();
 
         void rockSpawner() {
             entities.push_back(StaticEntity("rock",ofColor::gray,ofRandom(1, (boardSizeWidth-1)), ofRandom(1, (boardSizeHeight-2)),25));
