@@ -16,6 +16,7 @@ public:
     void tick() {}
     int getScore(){return 0;}
     void displayScore(int s){this->score=s;}
+    bool isPowUp_Activated(){}
 
     ofTrueTypeFont font;
     int score;

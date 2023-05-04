@@ -103,7 +103,7 @@ void GameState::update() {
 //--------------------------------------------------------------
 void GameState::draw() {
     drawBoardGrid();
-    if(On_Off){
+    if(On_Off){ //Dibuja el GPS
         path.clear();
         crossedPath.clear();
         crossedPath.resize(boardSizeWidth, vector<int>(boardSizeHeight, 0));
@@ -146,8 +146,6 @@ void GameState::draw() {
 }
 //--------------------------------------------------------------
 void GameState::keyPressed(int key) {
-
-    // if(key != OF_KEY_LEFT && key != OF_KEY_RIGHT && key != OF_KEY_UP && key != OF_KEY_DOWN && key !='a' && key!='u' && key!='b' && key!='p') { return; }
 
     switch(key) {
         case OF_KEY_LEFT:
@@ -208,7 +206,7 @@ void GameState::keyPressed(int key) {
 }
 //--------------------------------------------------------------
 void GameState::foodSpawner() {
-    if(!foodSpawned) {                                                                                  //Make compatible with speedBoost powup
+    if(!foodSpawned) {                                                             
         bool isInSnakeBody;
         bool isInEntities;
         do {
@@ -319,7 +317,7 @@ void GameState::powUpDisplay(int p_score){
 
 void GameState::tick(){
     ticks++;
-    if(ticks % 60 == 0){
+    if(ticks % 60 == 0){ //60 ticks son un segundo
         seconds+=1;
         decayCounter+=1;
     }
@@ -341,7 +339,7 @@ void GameState::tick(){
 bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
     int snakeX=snake->getHead()[0];
     int snakeY=snake->getHead()[1]; 
-    // Check if the snake is within the bounds of the maze
+    // Chequea que el snake este dentro de los limites
     if (row < 0 || row >= boardSizeWidth || col < 0 || col >= boardSizeHeight) {
         return false;
     }
@@ -367,7 +365,7 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
         if(col<currentFoodY || col>snake->getHead()[1]) return false;
     }
 
-    // Check if the snake found the apple
+    // Chequea si el snake encontro la manzana
     if (currentFoodX == row && currentFoodY == col) {
         path.emplace_back(row, col);
         return true;
@@ -383,7 +381,7 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
         return false;
     }
 
-    // Mark the current cell as visited
+    // Marca la posicion corrinte como visitada
     crossedPath[row][col] = -1;
 
     //Bulk Decision MAKING (Binary Search IDEA)
@@ -496,10 +494,9 @@ bool GameState::GPS(int row, int col, vector<pair<int, int>>& path) {
 
     }
 
-
-    // Mark the current cell as unvisited
+    // Marca la posicion corriente como no visitada
     crossedPath[row][col] = 0;
 
-    // No path found
+    // No se encuentra el camino
     return false;
 }
