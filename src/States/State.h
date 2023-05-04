@@ -12,7 +12,6 @@ class State {
 		virtual void mousePressed(int x, int y, int button) = 0;
 		virtual void tick()=0;
 		virtual int getScore()=0;
-		virtual bool isPowUp_Activated()=0;
 
 		bool hasFinished(){
 			return finished;
