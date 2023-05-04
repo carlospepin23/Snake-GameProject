@@ -90,8 +90,8 @@ void GameState::update() {
         }  
     }
 
-    int updateCount = powUp_Speed_Boost ? 5 : 10;
-    if(ofGetFrameNum() % updateCount == 0) {
+    int updateCount = powUp_Speed_Boost ? 3 : 6; // if speedBoost is not active, we call snake->update() every 6 frames
+    if(ofGetFrameNum() % updateCount == 0) {     // if speedBoost is active, we call it every 3 frames which makes the snake move faster
             snake->update();
     }
 

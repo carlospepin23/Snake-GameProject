@@ -29,4 +29,6 @@ class ofApp : public ofBaseApp{
 		bool soundPaused = false;
 
 		ofSoundPlayer sound2;
+
+		ofSoundPlayer sound3;
 };

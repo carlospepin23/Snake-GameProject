@@ -14,8 +14,10 @@ void ofApp::setup(){
 
     sound.load("TetrisOrch.wav");
     sound2.load("8bit.wav");
+    sound3.load("riseup.wav");
     sound.setLoop(true);
     sound2.setLoop(true);
+    sound3.setLoop(true);
     sound2.play();
 }
 
@@ -27,12 +29,14 @@ void ofApp::update(){
             gameState->reset();
             currentState = gameState;
             sound2.stop();
+            sound3.stop();
             sound.play();
         } else if(currentState->getNextState() == "LoseState") {
             loseState->reset();
             loseState->displayScore(currentState->getScore());
             currentState = loseState;
             sound.stop();
+            sound3.play();
         } else if(currentState->getNextState() == "PauseState") {
             pauseState->reset();
             currentState = pauseState;

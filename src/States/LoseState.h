@@ -17,6 +17,7 @@ public:
     int getScore(){return 0;}
     void displayScore(int s){this->score=s;}
 
+    ofImage backgroundImg2;
     ofTrueTypeFont font;
     int score;
 
