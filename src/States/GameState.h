@@ -80,12 +80,6 @@ class GameState : public State {
         int timer=0;
         void powUpManager(int score);
         void powUpDisplay(int p_score);
-        bool isPowUp_Activated(){
-            if(pow_up_s!="None"){
-                return true;
-            }
-            else return false;
-        };
 //--------------------------------------------------------------------------------------
 //------Entities FUNCTION--------------------------------------------------------------
         vector<StaticEntity> entities;

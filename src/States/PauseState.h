@@ -15,7 +15,6 @@ public:
     void update(){}
     void tick() {}
     int getScore(){return 0;}
-    bool isPowUp_Activated(){}
 
     ofRectangle continueButton;
     ofTrueTypeFont font;

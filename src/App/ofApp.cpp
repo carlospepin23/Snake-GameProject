@@ -62,7 +62,7 @@ void ofApp::keyPressed(int key){
     if (key == 'p') {
         sound.setPaused(true);
     }
-    if (key == 'b' && currentState->isPowUp_Activated()) {
+    if (key == 'b') {
         if (!soundPaused) {
             sound.setPaused(true);
             soundPaused = true;                               // pauses the music and stores the song time position.
