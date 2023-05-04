@@ -4,6 +4,7 @@
 void ofApp::setup(){
 
     ofSetWindowTitle("Snake");
+    ofSetFrameRate(60);
 
     gameState = new GameState();
     menuState = new MenuState();
@@ -84,5 +85,4 @@ void ofApp::keyPressed(int key){
 
 void ofApp::mousePressed(int x, int y, int button) {
     currentState->mousePressed(x, y, button);
-    // sound.setPosition(currentSongPosition);
 }

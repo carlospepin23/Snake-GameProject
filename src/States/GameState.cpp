@@ -319,7 +319,7 @@ void GameState::powUpDisplay(int p_score){
 
 void GameState::tick(){
     ticks++;
-    if(ticks % 150 == 0){
+    if(ticks % 60 == 0){
         seconds+=1;
         decayCounter+=1;
     }
