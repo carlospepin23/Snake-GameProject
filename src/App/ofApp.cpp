@@ -4,6 +4,7 @@
 void ofApp::setup(){
 
     ofSetWindowTitle("Snake");
+    ofSetFrameRate(60);
 
     gameState = new GameState();
     menuState = new MenuState();
@@ -53,16 +54,6 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     currentState->draw();
-    // ofSetColor(ofColor::white);
-    // if(currentState == gameState) {
-    //     ofDrawBitmapString("Current State: GameState", 10, 45);
-    // }
-    // if(currentState == loseState) {
-    //     ofDrawBitmapString("Current State: LoseState", 10, 15);    // Draws the current state of the game.
-    // }
-    // if(currentState == pauseState) {
-    //     ofDrawBitmapString("Current State: PauseState", 10, 15);
-    // }
 }
 
 //--------------------------------------------------------------
@@ -71,7 +62,7 @@ void ofApp::keyPressed(int key){
     if (key == 'p') {
         sound.setPaused(true);
     }
-    if (key == 'b') {
+    if (key == 'b' && currentState->isPowUp_Activated()) {
         if (!soundPaused) {
             sound.setPaused(true);
             soundPaused = true;                               // pauses the music and stores the song time position.
@@ -83,6 +74,5 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 
 void ofApp::mousePressed(int x, int y, int button) {
-    currentState->mousePressed(x, y, button);
-    // sound.setPosition(currentSongPosition);
+    currentState->mousePressed(x, y, button);;
 }

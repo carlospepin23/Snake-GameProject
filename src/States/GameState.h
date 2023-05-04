@@ -40,13 +40,16 @@ class GameState : public State {
 //--------------------------------------------------------------------------------
 //------GPS FUNCTION--------------------------------------------------------------
         bool On_Off=false;
+        bool colorChooser=false;
         vector<pair<int, int>>path;
         vector<vector<int>>crossedPath;
         bool GPS(int row, int col,vector<pair<int, int>>& p);
 
         void drawPathHelper(auto begin, auto end){
             if(begin!=end){
-                ofSetColor(ofColor::lightSalmon);
+                colorChooser=!colorChooser;
+                if(colorChooser) ofSetColor(ofColor::lightCoral);
+                else ofSetColor(ofColor::lightYellow);
                 ofDrawRectangle(begin->first*cellSize, begin->second*cellSize, cellSize, cellSize);
                 drawPathHelper(begin+1,end);
             }
@@ -77,6 +80,12 @@ class GameState : public State {
         int timer=0;
         void powUpManager(int score);
         void powUpDisplay(int p_score);
+        bool isPowUp_Activated(){
+            if(pow_up_s!="None"){
+                return true;
+            }
+            else return false;
+        };
 //--------------------------------------------------------------------------------------
 //------Entities FUNCTION--------------------------------------------------------------
         vector<StaticEntity> entities;

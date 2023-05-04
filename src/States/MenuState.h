@@ -15,6 +15,7 @@ public:
     void mousePressed(int x, int y, int button);
     void tick() {}
     int getScore(){return 0;}
+    bool isPowUp_Activated(){}
 
     ofTrueTypeFont font;
     
